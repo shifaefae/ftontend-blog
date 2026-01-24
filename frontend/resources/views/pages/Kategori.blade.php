@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layout.App')
 
 @section('title', 'Kategori - Portal Blog')
 
