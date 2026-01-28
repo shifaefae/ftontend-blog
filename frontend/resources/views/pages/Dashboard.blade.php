@@ -7,17 +7,16 @@
 <div class="dashboard-container" style="padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:  #fbfbfc 100%; min-height: 100vh;">
     
     <!-- Title -->
-    <h1 style="font-size: 28px; margin-bottom: 25px; color: #2d3748; font-weight: 700; background: linear-gradient(135deg, #2d3748 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Dashboard Portal Blog</h1>
+    <h1 style="font-size: 28px; margin-bottom: 25px; color: #2d3748; font-weight: 700; background: linear-gradient(135deg, #2d3748 0%, #4988C4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Dashboard Portal Blog</h1>
     
 <!-- Stats Cards -->
 <div class="stats-cards" style="display: flex; gap: 20px; margin-bottom: 35px; flex-wrap: wrap;">
     <div class="stat-card" style="padding: 25px 35px; 
-                                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                                  background: linear-gradient(135deg, #4988C4 0%, #4988C4 100%); 
                                   border-radius: 12px; 
                                   flex: 1;
                                   min-width: 200px;
                                   text-align: center;
-                                  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
                                   transform: translateY(0);
                                   transition: all 0.3s ease;">
         <div style="font-size: 14px; color: rgba(255, 255, 255, 0.95); margin-bottom: 10px; font-weight: 500; letter-spacing: 0.5px;">📰 Jumlah Berita</div>
@@ -25,12 +24,11 @@
     </div>
     
     <div class="stat-card" style="padding: 25px 35px; 
-                                  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); 
+                                  background: linear-gradient(135deg, #4988C4 0%, #4988C4 100%); 
                                   border-radius: 12px; 
                                   flex: 1;
                                   min-width: 200px;
                                   text-align: center;
-                                  box-shadow: 0 8px 20px rgba(240, 147, 251, 0.3);
                                   transform: translateY(0);
                                   transition: all 0.3s ease;">
         <div style="font-size: 14px; color: rgba(255, 255, 255, 0.95); margin-bottom: 10px; font-weight: 500; letter-spacing: 0.5px;">✅ Berita Published</div>
@@ -38,12 +36,11 @@
     </div>
 
     <div class="stat-card" style="padding: 25px 35px; 
-                                  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); 
+                                  background: linear-gradient(135deg, #4988C4 0%, #4988C4 100%); 
                                   border-radius: 12px; 
                                   flex: 1;
                                   min-width: 200px;
                                   text-align: center;
-                                  box-shadow: 0 8px 20px rgba(79, 172, 254, 0.3);
                                   transform: translateY(0);
                                   transition: all 0.3s ease;">
         <div style="font-size: 14px; color: rgba(255, 255, 255, 0.95); margin-bottom: 10px; font-weight: 500; letter-spacing: 0.5px;">📝 Berita Draft</div>
@@ -54,13 +51,13 @@
 <style>
     .stat-card:hover {
         transform: translateY(-5px) !important;
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2) !important;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15) !important;  /* Bayangan netral */
     }
 </style>
     
     <!-- Diagram Viewers -->
     <div class="diagram-container" style="background: white; padding: 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 35px; border: 2px solid transparent; background-clip: padding-box; position: relative;">
-        <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%); border-radius: 16px 16px 0 0;"></div>
+        <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #4988C4 0%, #4988C4 50%, #4988C4 100%); border-radius: 16px 16px 0 0;"></div>
         <h2 style="font-size: 20px; margin-bottom: 25px; color: #2d3748; font-weight: 600; display: flex; align-items: center; gap: 10px;">
             <span style="font-size: 24px;">📊</span>
             Diagram Data Viewers 
@@ -112,7 +109,7 @@
                         titleColor: '#fff',
                         bodyColor: '#fff',
                         padding: 12,
-                        borderColor: '#667eea',
+                        borderColor: '#4988C4',
                         borderWidth: 1,
                         callbacks: {
                             label: function(context) {
@@ -174,7 +171,7 @@
                                        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
                                        border: 2px solid transparent;
                                        position: relative;">
-            <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);"></div>
+            <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #4988C4 0%, #4988C4 100%);"></div>
             <table style="width: 100%; border-collapse: collapse;">
                 <thead>
                     <tr style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-bottom: 2px solid #dee2e6;">
@@ -195,11 +192,16 @@
                         </td>
                         <td style="padding: 16px; color: #2d3748; font-weight: 500; line-height: 1.5;">Efek Krisis RAM, Toko di Jepang Sampai "Ngebet" Beli PC Lama Pelanggan</td>
                         <td style="padding: 16px; text-align: center;">
-                            <img src="https://via.placeholder.com/40" alt="Admin" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #667eea;">
+                            <img src="https://via.placeholder.com/40" alt="Admin" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #4988C4;">
                         </td>
                         <td style="padding: 16px; color: #4a5568; font-weight: 500;">Admin Satu</td>
                         <td style="padding: 16px; text-align: center;">
-                            <span style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); color: white; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; box-shadow: 0 2px 8px rgba(72, 187, 120, 0.3);">Published</span>
+                            <span style="background: #4988C4 100%; 
+                                         color: white; 
+                                         padding: 6px 14px; 
+                                         border-radius: 20px; 
+                                         font-size: 12px; 
+                                         font-weight: 600;">Published</span>
                         </td>
                         <td style="padding: 16px; text-align: center; color: #718096; font-size: 13px; font-weight: 500;">2 jam lalu</td>
                     </tr>
@@ -210,11 +212,16 @@
                         </td>
                         <td style="padding: 16px; color: #2d3748; font-weight: 500; line-height: 1.5;">Ribuan Warga Mojokerto Ikuti “Mlaku Bareng Gus Bupati” di Stadion Gajah Mada</td>
                         <td style="padding: 16px; text-align: center;">
-                            <img src="https://via.placeholder.com/40" alt="Admin" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #f093fb;">
+                            <img src="https://via.placeholder.com/40" alt="Admin" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #4988C4;">
                         </td>
                         <td style="padding: 16px; color: #4a5568; font-weight: 500;">Admin Dua</td>
                         <td style="padding: 16px; text-align: center;">
-                            <span style="background: linear-gradient(135deg, #ecc94b 0%, #d69e2e 100%); color: #2d3748; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; box-shadow: 0 2px 8px rgba(236, 201, 75, 0.3);">Draft</span>
+                            <span style="background: linear-gradient(135deg, #4988C4 0%, #4988C4 100%); 
+                                         color: #ffff; 
+                                         padding: 6px 14px; 
+                                         border-radius: 20px; 
+                                         font-size: 12px; 
+                                         font-weight: 600;">Draft</span>
                         </td>
                         <td style="padding: 16px; text-align: center; color: #718096; font-size: 13px; font-weight: 500;">5 jam lalu</td>
                     </tr>
@@ -225,11 +232,11 @@
                         </td>
                         <td style="padding: 16px; color: #2d3748; font-weight: 500; line-height: 1.5;">Pihak Tergugat 1 (Bapenda Kab Sukabumi), Tidak Bisa Hadirkan Saksi Fakta Dan Alat Bukti Dalam Lanjutan Sidang Gugatan Bayar Pajak Waris Tanah Natadipura</td>
                         <td style="padding: 16px; text-align: center;">
-                            <img src="https://via.placeholder.com/40" alt="Admin" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #4facfe;">
+                            <img src="https://via.placeholder.com/40" alt="Admin" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #4988C4;">
                         </td>
                         <td style="padding: 16px; color: #4a5568; font-weight: 500;">Admin Tiga</td>
                         <td style="padding: 16px; text-align: center;">
-                            <span style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); color: white; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; box-shadow: 0 2px 8px rgba(72, 187, 120, 0.3);">Published</span>
+                            <span style="background: linear-gradient(135deg, #4988C4 0%, #4988C4 100%); color: white; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; ">Published</span>
                         </td>
                         <td style="padding: 16px; text-align: center; color: #718096; font-size: 13px; font-weight: 500;">1 hari lalu</td>
                     </tr>
@@ -251,35 +258,35 @@
                                        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
                                        border: 2px solid transparent;
                                        position: relative;">
-            <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%); border-radius: 16px 16px 0 0;"></div>
+            <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #4988C4 0%, #4988C4 100%); border-radius: 16px 16px 0 0;"></div>
             <div id="beritaTerpopulerList">
                 <!-- Item 1 -->
-                <div style="padding: 15px; border-radius: 12px; margin-bottom: 15px; background: linear-gradient(135deg, #fef5e7 0%, #fdebd0 100%); border-left: 4px solid #f59e0b; transition: all 0.3s;">
-                    <div style="color: #2d3748; font-weight: 600; font-size: 13px; line-height: 1.5; margin-bottom: 10px;">Bahlil Siap Perangi Mafia Migas, Minta Dukungan Ulama</div>
+                <div style="padding: 15px; border-radius: 12px; margin-bottom: 15px; background: linear-gradient(135deg, #4988C4 0%, #4988C4 100%); border-left: 4px solid #4988C4; transition: all 0.3s;">
+                    <div style="color: #ffff; font-weight: 600; font-size: 13px; line-height: 1.5; margin-bottom: 10px;">Bahlil Siap Perangi Mafia Migas, Minta Dukungan Ulama</div>
                     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                        <span style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 600;">POLITIK</span>
-                        <span style="color: #2d3748; font-size: 12px; font-weight: 600;">👁 15.3k</span>
-                        <span style="color: #718096; font-size: 11px;">3 hari lalu</span>
+                        <span style="background: linear-gradient(135deg, #4988C4 0%, #4988C4 100%); color: white; padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 600;">POLITIK</span>
+                        <span style="color: #ffff; font-size: 12px; font-weight: 600;">👁 15.3k</span>
+                        <span style="color: #ffff; font-size: 11px;">3 hari lalu</span>
                     </div>
                 </div>
                 
                 <!-- Item 2 -->
-                <div style="padding: 15px; border-radius: 12px; margin-bottom: 15px; background: linear-gradient(135deg, #e8f4f8 0%, #d4e9f2 100%); border-left: 4px solid #06b6d4; transition: all 0.3s;">
-                    <div style="color: #2d3748; font-weight: 600; font-size: 13px; line-height: 1.5; margin-bottom: 10px;">Indonesia Percepat Pembangunan Infrastruktur Digital Nasional Internet</div>
+                <div style="padding: 15px; border-radius: 12px; margin-bottom: 15px; background: linear-gradient(135deg, #4988C4 0%, #4988C4 100%); border-left: 4px solid #4988C4; transition: all 0.3s;">
+                    <div style="color: #ffff; font-weight: 600; font-size: 13px; line-height: 1.5; margin-bottom: 10px;">Indonesia Percepat Pembangunan Infrastruktur Digital Nasional Internet</div>
                     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                        <span style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 600;">TEKNOLOGI</span>
-                        <span style="color: #2d3748; font-size: 12px; font-weight: 600;">👁 12.8k</span>
-                        <span style="color: #718096; font-size: 11px;">1 minggu lalu</span>
+                        <span style="background: linear-gradient(135deg, #4988C4 0%, #4988C4 100%); color: white; padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 600;">TEKNOLOGI</span>
+                        <span style="color: #ffff; font-size: 12px; font-weight: 600;">👁 12.8k</span>
+                        <span style="color: #ffff; font-size: 11px;">1 minggu lalu</span>
                     </div>
                 </div>
                 
                 <!-- Item 3 -->
-                <div style="padding: 15px; border-radius: 12px; background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-left: 4px solid #ec4899; transition: all 0.3s;">
-                    <div style="color: #2d3748; font-weight: 600; font-size: 13px; line-height: 1.5; margin-bottom: 10px;">Erick Thohir Tancap Gas, Industri Olahraga Ditarget Jadi Mesin Ekonomi Baru Nasional</div>
+                <div style="padding: 15px; border-radius: 12px; background: linear-gradient(135deg, #4988C4 0%, #4988C4 100%); border-left: 4px solid #4988C4; transition: all 0.3s;">
+                    <div style="color: #ffff; font-weight: 600; font-size: 13px; line-height: 1.5; margin-bottom: 10px;">Erick Thohir Tancap Gas, Industri Olahraga Ditarget Jadi Mesin Ekonomi Baru Nasional</div>
                     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                        <span style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 600;">OLAHRAGA</span>
-                        <span style="color: #2d3748; font-size: 12px; font-weight: 600;">👁 10.5k</span>
-                        <span style="color: #718096; font-size: 11px;">2 hari lalu</span>
+                        <span style="background: linear-gradient(135deg, #4988C4 0%, #4988C4 100%); color: white; padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 600;">OLAHRAGA</span>
+                        <span style="color: #ffff; font-size: 12px; font-weight: 600;">👁 10.5k</span>
+                        <span style="color: #ffff; font-size: 11px;">2 hari lalu</span>
                     </div>
                 </div>
             </div>

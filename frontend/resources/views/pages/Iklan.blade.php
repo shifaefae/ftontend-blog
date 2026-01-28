@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     body {
-      background: linear #ffff;
+      background: #ffffff;
       min-height: 100vh;
     }
     .card-hover {
@@ -22,7 +22,7 @@
     }
     .card-hover:hover {
       transform: translateY(-5px);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      box-shadow: 0 20px 40px rgba(73, 136, 196, 0.3);
     }
     .gradient-border::before {
       content: '';
@@ -31,7 +31,7 @@
       left: 0;
       right: 0;
       height: 4px;
-      background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      background: #4988C4;
       border-radius: 16px 16px 0 0;
     }
     @keyframes slideIn {
@@ -46,9 +46,9 @@
 <div class="p-6">
   <!-- Header -->
   <div class="mb-8 animate-slide">
-    <h1 class="text-5xl font-bold text-black flex items-center gap-4 drop-shadow-lg">
-      <div class="bg-white p-4 rounded-2xl shadow-2xl">
-        <i class="fas fa-ad text-purple-600 text-4xl"></i>
+    <h1 class="text-5xl font-bold flex items-center gap-4 drop-shadow-lg" style="color: #000000;">
+      <div class="p-4 rounded-2xl shadow-2xl" style="background-color: #ffffff;">
+        <i class="fas fa-ad text-4xl" style="color: #4988C4;"></i>
       </div>
       Kelola Iklan
     </h1>
@@ -57,34 +57,40 @@
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
 
     <!-- FORM TAMBAH IKLAN -->
-    <div class="bg-white rounded-2xl shadow-2xl card-hover p-6 flex flex-col relative gradient-border animate-slide">
-      <h2 class="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-6 flex items-center gap-2">
+    <div class="rounded-2xl shadow-xl card-hover p-8 flex flex-col relative gradient-border animate-slide" style="background-color: #ffffff;">
+      <h2 class="text-3xl font-bold mb-6 flex items-center gap-3" style="color: #4988C4;">
         <i class="fas fa-plus-circle"></i>
         Tambah Iklan
       </h2>
 
-      <form id="formTambah" class="flex flex-col flex-1 space-y-5">
+      <form id="formTambah" class="flex flex-col flex-1 space-y-6">
         <div>
-          <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-            <i class="fas fa-heading text-purple-600"></i>
+          <label class="block text-sm font-bold mb-3 flex items-center gap-2" style="color: #4988C4;">
+            <i class="fas fa-heading"></i>
             Judul Iklan
           </label>
           <input 
             type="text" 
             id="inputJudul"
             placeholder="Masukkan judul iklan" 
-            class="w-full rounded-xl border-2 border-purple-200 px-4 py-3 focus:ring-4 focus:ring-purple-200 focus:border-purple-500 outline-none transition-all" 
+            class="w-full rounded-xl px-4 py-3 focus:ring-4 outline-none transition-all text-base" 
+            style="border: 2px solid #4988C4; background-color: #ffffff;"
+            onfocus="this.style.boxShadow='0 0 0 4px rgba(73, 136, 196, 0.2)'"
+            onblur="this.style.boxShadow='none'"
           />
         </div>
 
         <div>
-          <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-            <i class="fas fa-layer-group text-purple-600"></i>
+          <label class="block text-sm font-bold mb-3 flex items-center gap-2" style="color: #4988C4;">
+            <i class="fas fa-layer-group"></i>
             Tipe Iklan
           </label>
           <select 
             id="inputTipe"
-            class="w-full rounded-xl border-2 border-purple-200 px-4 py-3 focus:ring-4 focus:ring-purple-200 focus:border-purple-500 outline-none transition-all">
+            class="w-full rounded-xl px-4 py-3 focus:ring-4 outline-none transition-all text-base"
+            style="border: 2px solid #4988C4; background-color: #ffffff;"
+            onfocus="this.style.boxShadow='0 0 0 4px rgba(73, 136, 196, 0.2)'"
+            onblur="this.style.boxShadow='none'">
             <option value="">Pilih Tipe Iklan</option>
             <option>1:1 Slide</option>
             <option>3:1 Kanan</option>
@@ -96,21 +102,24 @@
         </div>
 
         <div>
-          <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-            <i class="fas fa-link text-purple-600"></i>
+          <label class="block text-sm font-bold mb-3 flex items-center gap-2" style="color: #4988C4;">
+            <i class="fas fa-link"></i>
             Link URL
           </label>
           <input 
             type="text" 
             id="inputLink"
             placeholder="https://example.com" 
-            class="w-full rounded-xl border-2 border-purple-200 px-4 py-3 focus:ring-4 focus:ring-purple-200 focus:border-purple-500 outline-none transition-all" 
+            class="w-full rounded-xl px-4 py-3 focus:ring-4 outline-none transition-all text-base" 
+            style="border: 2px solid #4988C4; background-color: #ffffff;"
+            onfocus="this.style.boxShadow='0 0 0 4px rgba(73, 136, 196, 0.2)'"
+            onblur="this.style.boxShadow='none'"
           />
         </div>
 
         <div>
-          <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-            <i class="fas fa-image text-purple-600"></i>
+          <label class="block text-sm font-bold mb-3 flex items-center gap-2" style="color: #4988C4;">
+            <i class="fas fa-image"></i>
             Gambar Iklan
           </label>
           <div class="flex items-center gap-3">
@@ -121,13 +130,13 @@
               class="hidden"
               onchange="previewGambar(event)"
             >
-            <label for="inputGambar" class="flex-1 px-4 py-3 border-2 border-purple-200 rounded-xl text-sm text-gray-500 cursor-pointer hover:border-purple-500 hover:bg-purple-50 transition-all flex items-center justify-center gap-2">
-              <i class="fas fa-cloud-upload-alt text-lg"></i>
+            <label for="inputGambar" class="flex-1 px-4 py-3 rounded-xl text-base cursor-pointer transition-all flex items-center justify-center gap-2 font-medium" style="border: 2px solid #4988C4; color: #4988C4; background-color: #ffffff;" onmouseover="this.style.backgroundColor='rgba(73, 136, 196, 0.1)'" onmouseout="this.style.backgroundColor='#ffffff'">
+              <i class="fas fa-cloud-upload-alt text-xl"></i>
               <span id="namaFile">Pilih gambar</span>
             </label>
           </div>
-          <div id="previewContainer" class="hidden mt-3">
-            <img id="previewImage" class="w-full h-40 object-cover rounded-xl border-2 border-purple-200 shadow-lg">
+          <div id="previewContainer" class="hidden mt-4">
+            <img id="previewImage" class="w-full h-48 object-cover rounded-xl shadow-lg" style="border: 2px solid #4988C4;">
           </div>
         </div>
 
@@ -136,7 +145,10 @@
         <button 
           type="button"
           onclick="tambahIklan()" 
-          class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 rounded-xl hover:from-purple-700 hover:to-pink-700 transform hover:scale-105 transition-all shadow-lg hover:shadow-2xl"
+          class="w-full text-white font-bold py-4 rounded-xl transform hover:scale-105 transition-all shadow-lg hover:shadow-2xl text-lg"
+          style="background-color: #4988C4;"
+          onmouseover="this.style.backgroundColor='#3a6ea0'"
+          onmouseout="this.style.backgroundColor='#4988C4'"
         >
           <i class="fas fa-paper-plane mr-2"></i>Upload Iklan
         </button>
@@ -144,93 +156,93 @@
     </div>
 
     <!-- TABEL IKLAN -->
-    <div class="bg-white rounded-2xl shadow-2xl card-hover p-6 lg:col-span-2 flex flex-col relative gradient-border animate-slide" style="animation-delay: 0.1s;">
-      <h2 class="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4 flex items-center gap-2">
+    <div class="rounded-2xl shadow-xl card-hover p-8 lg:col-span-2 flex flex-col relative gradient-border animate-slide" style="animation-delay: 0.1s; background-color: #ffffff;">
+      <h2 class="text-3xl font-bold mb-6 flex items-center gap-3" style="color: #4988C4;">
         <i class="fas fa-list"></i>
         Daftar Iklan
       </h2>
 
-      <div class="overflow-y-auto max-h-[520px] border-2 border-purple-100 rounded-xl shadow-inner">
-        <table class="min-w-full text-sm">
-          <thead class="bg-gradient-to-r from-purple-600 to-pink-600 text-white sticky top-0 shadow-lg">
+      <div class="overflow-y-auto max-h-[600px] rounded-xl shadow-inner" style="border: 2px solid #4988C4;">
+        <table class="min-w-full">
+          <thead class="text-white sticky top-0 shadow-lg" style="background-color: #4988C4;">
             <tr>
-              <th class="px-4 py-4 font-bold">No</th>
-              <th class="px-4 py-4 font-bold text-left">Judul</th>
-              <th class="px-4 py-4 font-bold">Tipe</th>
-              <th class="px-4 py-4 font-bold">Link</th>
-              <th class="px-4 py-4 font-bold">Gambar</th>
-              <th class="px-4 py-4 font-bold">Aksi</th>
+              <th class="px-6 py-4 font-bold text-base">No</th>
+              <th class="px-6 py-4 font-bold text-left text-base">Judul</th>
+              <th class="px-6 py-4 font-bold text-base">Tipe</th>
+              <th class="px-6 py-4 font-bold text-base">Link</th>
+              <th class="px-6 py-4 font-bold text-base">Gambar</th>
+              <th class="px-6 py-4 font-bold text-base">Aksi</th>
             </tr>
           </thead>
-          <tbody id="tabelIklan" class="divide-y divide-purple-100">
-            <tr class="hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 transition-all">
-              <td class="px-4 py-4 text-center font-semibold">1</td>
-              <td class="px-4 py-4 font-semibold text-gray-800">Pemerintah Resmi Naikkan UMK 2026</td>
-              <td class="px-4 py-4 text-center">
-                <span class="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-3 py-1 rounded-full text-xs font-bold">3:1 Tengah</span>
+          <tbody id="tabelIklan">
+            <tr class="transition-all" style="background-color: #ffffff;" onmouseover="this.style.backgroundColor='rgba(73, 136, 196, 0.1)'" onmouseout="this.style.backgroundColor='#ffffff'">
+              <td class="px-6 py-5 text-center font-semibold text-base" style="border-bottom: 1px solid #4988C4;">1</td>
+              <td class="px-6 py-5 font-semibold text-base" style="border-bottom: 1px solid #4988C4; color: #4988C4;">Pemerintah Resmi Naikkan UMK 2026</td>
+              <td class="px-6 py-5 text-center" style="border-bottom: 1px solid #4988C4;">
+                <span class="text-sm font-bold" style="color: #4988C4;">3:1 Tengah</span>
               </td>
-              <td class="px-4 py-4">
-                <a href="#" class="text-purple-600 hover:text-pink-600 font-medium flex items-center gap-1">
-                  <i class="fas fa-external-link-alt text-xs"></i>
+              <td class="px-6 py-5" style="border-bottom: 1px solid #4988C4;">
+                <a href="https://berita.com/1" target="_blank" class="font-medium flex items-center gap-2 text-sm hover:underline" style="color: #4988C4;">
+                  <i class="fas fa-external-link-alt"></i>
                   berita.com/1
                 </a>
               </td>
-              <td class="px-4 py-4">
-                <img src="https://picsum.photos/seed/1/120/80" class="rounded-lg object-cover shadow-md hover:shadow-xl transition-all" />
+              <td class="px-6 py-5" style="border-bottom: 1px solid #4988C4;">
+                <img src="https://picsum.photos/seed/1/120/80" class="rounded-lg object-cover shadow-md hover:shadow-xl transition-all w-[140px] h-[90px]" />
               </td>
-              <td class="px-4 py-4 text-center">
-                <button onclick="editIklan('Pemerintah Resmi Naikkan UMK 2026', '3:1 Tengah', 'berita.com/1')" class="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-3 py-1.5 rounded-lg font-semibold mr-2 shadow-md hover:shadow-lg transition-all">
+              <td class="px-6 py-5 text-center" style="border-bottom: 1px solid #4988C4;">
+                <button onclick="editIklan(this, 'Pemerintah Resmi Naikkan UMK 2026', '3:1 Tengah', 'https://berita.com/1')" class="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-4 py-2 rounded-lg font-semibold mr-2 shadow-md hover:shadow-lg transition-all">
                   <i class="fas fa-edit"></i>
                 </button>
-                <button onclick="hapusIklan(this)" class="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-3 py-1.5 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all">
+                <button onclick="hapusIklan(this)" class="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all">
                   <i class="fas fa-trash"></i>
                 </button>
               </td>
             </tr>
-            <tr class="hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 transition-all">
-              <td class="px-4 py-4 text-center font-semibold">2</td>
-              <td class="px-4 py-4 font-semibold text-gray-800">Harga BBM Terbaru Berlaku Nasional</td>
-              <td class="px-4 py-4 text-center">
-                <span class="bg-gradient-to-r from-green-500 to-teal-500 text-white px-3 py-1 rounded-full text-xs font-bold">1:1 Slide</span>
+            <tr class="transition-all" style="background-color: #ffffff;" onmouseover="this.style.backgroundColor='rgba(73, 136, 196, 0.1)'" onmouseout="this.style.backgroundColor='#ffffff'">
+              <td class="px-6 py-5 text-center font-semibold text-base" style="border-bottom: 1px solid #4988C4;">2</td>
+              <td class="px-6 py-5 font-semibold text-base" style="border-bottom: 1px solid #4988C4; color: #4988C4;">Harga BBM Terbaru Berlaku Nasional</td>
+              <td class="px-6 py-5 text-center" style="border-bottom: 1px solid #4988C4;">
+                <span class="text-sm font-bold" style="color: #4988C4;">1:1 Slide</span>
               </td>
-              <td class="px-4 py-4">
-                <a href="#" class="text-purple-600 hover:text-pink-600 font-medium flex items-center gap-1">
-                  <i class="fas fa-external-link-alt text-xs"></i>
+              <td class="px-6 py-5" style="border-bottom: 1px solid #4988C4;">
+                <a href="https://berita.com/2" target="_blank" class="font-medium flex items-center gap-2 text-sm hover:underline" style="color: #4988C4;">
+                  <i class="fas fa-external-link-alt"></i>
                   berita.com/2
                 </a>
               </td>
-              <td class="px-4 py-4">
-                <img src="https://picsum.photos/seed/2/120/80" class="rounded-lg object-cover shadow-md hover:shadow-xl transition-all" />
+              <td class="px-6 py-5" style="border-bottom: 1px solid #4988C4;">
+                <img src="https://picsum.photos/seed/2/120/80" class="rounded-lg object-cover shadow-md hover:shadow-xl transition-all w-[140px] h-[90px]" />
               </td>
-              <td class="px-4 py-4 text-center">
-                <button onclick="editIklan('Harga BBM Terbaru Berlaku Nasional', '1:1 Slide', 'berita.com/2')" class="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-3 py-1.5 rounded-lg font-semibold mr-2 shadow-md hover:shadow-lg transition-all">
+              <td class="px-6 py-5 text-center" style="border-bottom: 1px solid #4988C4;">
+                <button onclick="editIklan(this, 'Harga BBM Terbaru Berlaku Nasional', '1:1 Slide', 'https://berita.com/2')" class="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-4 py-2 rounded-lg font-semibold mr-2 shadow-md hover:shadow-lg transition-all">
                   <i class="fas fa-edit"></i>
                 </button>
-                <button onclick="hapusIklan(this)" class="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-3 py-1.5 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all">
+                <button onclick="hapusIklan(this)" class="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all">
                   <i class="fas fa-trash"></i>
                 </button>
               </td>
             </tr>
-            <tr class="hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 transition-all">
-              <td class="px-4 py-4 text-center font-semibold">3</td>
-              <td class="px-4 py-4 font-semibold text-gray-800">Timnas Indonesia Lolos Piala Asia</td>
-              <td class="px-4 py-4 text-center">
-                <span class="bg-gradient-to-r from-orange-500 to-red-500 text-white px-3 py-1 rounded-full text-xs font-bold">3:1 Kanan</span>
+            <tr class="transition-all" style="background-color: #ffffff;" onmouseover="this.style.backgroundColor='rgba(73, 136, 196, 0.1)'" onmouseout="this.style.backgroundColor='#ffffff'">
+              <td class="px-6 py-5 text-center font-semibold text-base" style="border-bottom: 1px solid #4988C4;">3</td>
+              <td class="px-6 py-5 font-semibold text-base" style="border-bottom: 1px solid #4988C4; color: #4988C4;">Timnas Indonesia Lolos Piala Asia</td>
+              <td class="px-6 py-5 text-center" style="border-bottom: 1px solid #4988C4;">
+                <span class="text-sm font-bold" style="color: #4988C4;">3:1 Kanan</span>
               </td>
-              <td class="px-4 py-4">
-                <a href="#" class="text-purple-600 hover:text-pink-600 font-medium flex items-center gap-1">
-                  <i class="fas fa-external-link-alt text-xs"></i>
+              <td class="px-6 py-5" style="border-bottom: 1px solid #4988C4;">
+                <a href="https://berita.com/3" target="_blank" class="font-medium flex items-center gap-2 text-sm hover:underline" style="color: #4988C4;">
+                  <i class="fas fa-external-link-alt"></i>
                   berita.com/3
                 </a>
               </td>
-              <td class="px-4 py-4">
-                <img src="https://picsum.photos/seed/3/120/80" class="rounded-lg object-cover shadow-md hover:shadow-xl transition-all" />
+              <td class="px-6 py-5" style="border-bottom: 1px solid #4988C4;">
+                <img src="https://picsum.photos/seed/3/120/80" class="rounded-lg object-cover shadow-md hover:shadow-xl transition-all w-[140px] h-[90px]" />
               </td>
-              <td class="px-4 py-4 text-center">
-                <button onclick="editIklan('Timnas Indonesia Lolos Piala Asia', '3:1 Kanan', 'berita.com/3')" class="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-3 py-1.5 rounded-lg font-semibold mr-2 shadow-md hover:shadow-lg transition-all">
+              <td class="px-6 py-5 text-center" style="border-bottom: 1px solid #4988C4;">
+                <button onclick="editIklan(this, 'Timnas Indonesia Lolos Piala Asia', '3:1 Kanan', 'https://berita.com/3')" class="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-4 py-2 rounded-lg font-semibold mr-2 shadow-md hover:shadow-lg transition-all">
                   <i class="fas fa-edit"></i>
                 </button>
-                <button onclick="hapusIklan(this)" class="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-3 py-1.5 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all">
+                <button onclick="hapusIklan(this)" class="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all">
                   <i class="fas fa-trash"></i>
                 </button>
               </td>
@@ -243,24 +255,24 @@
 </div>
 
 <!-- MODAL EDIT -->
-<div id="modal" class="fixed inset-0 hidden bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-4">
-  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg animate-slide">
-    <div class="bg-gradient-to-r from-blue-600 to-cyan-600 text-white p-6 rounded-t-3xl">
+<div id="modal" class="fixed inset-0 hidden flex items-center justify-center z-50 p-4" style="background-color: rgba(73, 136, 196, 0.6); backdrop-filter: blur(8px);">
+  <div class="rounded-3xl shadow-2xl w-full max-w-lg animate-slide" style="background-color: #ffffff;">
+    <div class="text-white p-6 rounded-t-3xl" style="background-color: #4988C4;">
       <h3 class="text-2xl font-bold flex items-center gap-3">
         <i class="fas fa-edit"></i>
         Edit Iklan
       </h3>
     </div>
 
-    <form class="p-6 space-y-4">
+    <form class="p-8 space-y-5">
       <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-2">Judul</label>
-        <input id="modalJudul" type="text" class="w-full border-2 border-blue-200 rounded-xl px-4 py-3 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none" />
+        <label class="block text-sm font-bold mb-3" style="color: #4988C4;">Judul</label>
+        <input id="modalJudul" type="text" class="w-full rounded-xl px-4 py-3 focus:ring-4 outline-none text-base" style="border: 2px solid #4988C4; background-color: #ffffff;" onfocus="this.style.boxShadow='0 0 0 4px rgba(73, 136, 196, 0.2)'" onblur="this.style.boxShadow='none'" />
       </div>
 
       <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-2">Tipe Iklan</label>
-        <select id="modalTipe" class="w-full border-2 border-blue-200 rounded-xl px-4 py-3 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none">
+        <label class="block text-sm font-bold mb-3" style="color: #4988C4;">Tipe Iklan</label>
+        <select id="modalTipe" class="w-full rounded-xl px-4 py-3 focus:ring-4 outline-none text-base" style="border: 2px solid #4988C4; background-color: #ffffff;" onfocus="this.style.boxShadow='0 0 0 4px rgba(73, 136, 196, 0.2)'" onblur="this.style.boxShadow='none'">
           <option>1:1 Slide</option>
           <option>3:1 Kanan</option>
           <option>3:1 Kiri</option>
@@ -271,20 +283,20 @@
       </div>
 
       <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-2">Link</label>
-        <input id="modalLink" type="text" placeholder="https://example.com" class="w-full border-2 border-blue-200 rounded-xl px-4 py-3 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none" />
+        <label class="block text-sm font-bold mb-3" style="color: #4988C4;">Link</label>
+        <input id="modalLink" type="text" placeholder="https://example.com" class="w-full rounded-xl px-4 py-3 focus:ring-4 outline-none text-base" style="border: 2px solid #4988C4; background-color: #ffffff;" onfocus="this.style.boxShadow='0 0 0 4px rgba(73, 136, 196, 0.2)'" onblur="this.style.boxShadow='none'" />
       </div>
 
       <div>
-        <label class="block text-sm font-semibold text-gray-700 mb-2">Gambar Baru (opsional)</label>
-        <input type="file" accept="image/*" class="w-full text-sm border-2 border-blue-200 rounded-xl px-4 py-3" />
+        <label class="block text-sm font-bold mb-3" style="color: #4988C4;">Gambar Baru (opsional)</label>
+        <input type="file" id="modalGambar" accept="image/*" class="w-full text-base rounded-xl px-4 py-3" style="border: 2px solid #4988C4; background-color: #ffffff;" />
       </div>
 
       <div class="pt-4 flex justify-end gap-3">
-        <button type="button" onclick="closeModal()" class="px-6 py-3 rounded-xl border-2 border-gray-300 hover:bg-gray-100 font-semibold transition-all">
+        <button type="button" onclick="closeModal()" class="px-6 py-3 rounded-xl font-semibold transition-all text-base" style="border: 2px solid #4988C4; color: #4988C4; background-color: #ffffff;" onmouseover="this.style.backgroundColor='rgba(73, 136, 196, 0.1)'" onmouseout="this.style.backgroundColor='#ffffff'">
           <i class="fas fa-times mr-2"></i>Batal
         </button>
-        <button type="button" onclick="simpanEdit()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold shadow-lg transition-all">
+        <button type="button" onclick="simpanEdit()" class="px-6 py-3 rounded-xl text-white font-semibold shadow-lg transition-all text-base" style="background-color: #4988C4;" onmouseover="this.style.backgroundColor='#3a6ea0'" onmouseout="this.style.backgroundColor='#4988C4'">
           <i class="fas fa-check mr-2"></i>Simpan
         </button>
       </div>
@@ -293,11 +305,11 @@
 </div>
 
 <!-- Success Modal -->
-<div id="successModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50">
-  <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full m-4 text-center p-8">
-    <div class="text-6xl mb-4 text-green-500">✓</div>
-    <h3 class="text-2xl font-bold text-gray-800 mb-2" id="successMessage">Berhasil!</h3>
-    <button onclick="tutupSuccess()" class="mt-4 bg-gradient-to-r from-green-500 to-teal-500 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all">
+<div id="successModal" class="hidden fixed inset-0 flex items-center justify-center z-50" style="background-color: rgba(73, 136, 196, 0.6); backdrop-filter: blur(8px);">
+  <div class="rounded-3xl shadow-2xl max-w-md w-full m-4 text-center p-10" style="background-color: #ffffff;">
+    <div class="text-7xl mb-6" style="color: #4988C4;">✓</div>
+    <h3 class="text-2xl font-bold mb-2" id="successMessage" style="color: #4988C4;">Berhasil!</h3>
+    <button onclick="tutupSuccess()" class="mt-6 text-white px-10 py-3 rounded-xl font-semibold hover:shadow-lg transition-all text-base" style="background-color: #4988C4;" onmouseover="this.style.backgroundColor='#3a6ea0'" onmouseout="this.style.backgroundColor='#4988C4'">
       OK
     </button>
   </div>
@@ -332,33 +344,37 @@
 
     const tbody = document.getElementById('tabelIklan');
     const rowCount = tbody.rows.length + 1;
-    const colors = ['from-blue-500 to-cyan-500', 'from-green-500 to-teal-500', 'from-orange-500 to-red-500', 'from-purple-500 to-pink-500'];
-    const randomColor = colors[Math.floor(Math.random() * colors.length)];
 
     const tr = document.createElement('tr');
-    tr.className = 'hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 transition-all';
+    tr.className = 'transition-all';
+    tr.style.backgroundColor = '#ffffff';
+    tr.onmouseover = function() { this.style.backgroundColor = 'rgba(73, 136, 196, 0.1)'; };
+    tr.onmouseout = function() { this.style.backgroundColor = '#ffffff'; };
+    
     tr.innerHTML = `
-      <td class="px-4 py-4 text-center font-semibold">${rowCount}</td>
-      <td class="px-4 py-4 font-semibold text-gray-800">${judul}</td>
-      <td class="px-4 py-4 text-center">
-        <span class="bg-gradient-to-r ${randomColor} text-white px-3 py-1 rounded-full text-xs font-bold">${tipe}</span>
+      <td class="px-6 py-5 text-center font-semibold text-base" style="border-bottom: 1px solid #4988C4;">${rowCount}</td>
+      <td class="px-6 py-5 font-semibold text-base" style="border-bottom: 1px solid #4988C4; color: #4988C4;">${judul}</td>
+      <td class="px-6 py-5 text-center" style="border-bottom: 1px solid #4988C4;">
+        <span class="text-sm font-bold" style="color: #4988C4;">${tipe}</span>
       </td>
-      <td class="px-4 py-4">
-        <a href="${link}" target="_blank" class="text-purple-600 hover:text-pink-600 font-medium flex items-center gap-1">
-          <i class="fas fa-external-link-alt text-xs"></i>
+      <td class="px-6 py-5" style="border-bottom: 1px solid #4988C4;">
+        <a href="${link}" target="_blank" class="font-medium flex items-center gap-2 text-sm hover:underline" style="color: #4988C4;">
+          <i class="fas fa-external-link-alt"></i>
           ${link.substring(0, 30)}...
         </a>
       </td>
-      <td class="px-4 py-4">
-        <img src="${URL.createObjectURL(gambar)}" class="rounded-lg object-cover shadow-md hover:shadow-xl transition-all w-[120px] h-[80px]" />
+      <td class="px-6 py-5" style="border-bottom: 1px solid #4988C4;">
+        <img src="${URL.createObjectURL(gambar)}" class="rounded-lg object-cover shadow-md hover:shadow-xl transition-all w-[140px] h-[90px]" />
       </td>
-      <td class="px-4 py-4 text-center">
-        <button onclick="editIklan('${judul}', '${tipe}', '${link}')" class="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-3 py-1.5 rounded-lg font-semibold mr-2 shadow-md hover:shadow-lg transition-all">
-          <i class="fas fa-edit"></i>
-        </button>
-        <button onclick="hapusIklan(this)" class="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-3 py-1.5 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all">
-          <i class="fas fa-trash"></i>
-        </button>
+      <td class="py-4 px-4 text-center">
+          <button onclick="editJurnal(${jurnalCounter}, '${judul}', '${deskripsi}', '${userName}', '${currentImage}')" class="text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all" style="background-color: #4988C4;" onmouseover="this.style.backgroundColor='#3a6ea0'" onmouseout="this.style.backgroundColor='#4988C4'">
+              <i class="fas fa-edit"></i>
+          </button>
+      </td>
+      <td class="py-4 px-4 text-center">
+          <button onclick="hapusJurnal(${jurnalCounter})" class="text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all" style="background-color: #dc2626;" onmouseover="this.style.backgroundColor='#b91c1c'" onmouseout="this.style.backgroundColor='#dc2626'">
+              <i class="fas fa-trash"></i>
+          </button>
       </td>
     `;
     tbody.appendChild(tr);
@@ -370,7 +386,8 @@
     showSuccess('Iklan berhasil ditambahkan!');
   }
 
-  function editIklan(judul, tipe, link) {
+  function editIklan(btn, judul, tipe, link) {
+    currentRow = btn.closest('tr');
     document.getElementById('modal').classList.remove('hidden');
     document.getElementById('modalJudul').value = judul;
     document.getElementById('modalTipe').value = tipe;
@@ -379,16 +396,59 @@
 
   function closeModal() {
     document.getElementById('modal').classList.add('hidden');
+    currentRow = null;
   }
 
   function simpanEdit() {
+    if (!currentRow) return;
+    
+    const judul = document.getElementById('modalJudul').value.trim();
+    const tipe = document.getElementById('modalTipe').value;
+    const link = document.getElementById('modalLink').value.trim();
+    const gambarFile = document.getElementById('modalGambar').files[0];
+    
+    if (!judul || !tipe || !link) {
+      alert('⚠️ Semua field harus diisi!');
+      return;
+    }
+    
+    // Update judul
+    currentRow.cells[1].innerHTML = `<span class="font-semibold text-base" style="color: #4988C4;">${judul}</span>`;
+    
+    // Update tipe
+    currentRow.cells[2].innerHTML = `<span class="text-sm font-bold" style="color: #4988C4;">${tipe}</span>`;
+    
+    // Update link
+    currentRow.cells[3].innerHTML = `<a href="${link}" target="_blank" class="font-medium flex items-center gap-2 text-sm hover:underline" style="color: #4988C4;">
+      <i class="fas fa-external-link-alt"></i>
+      ${link.substring(0, 30)}...
+    </a>`;
+    
+    // Update gambar jika ada file baru
+    if (gambarFile) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        currentRow.cells[4].innerHTML = `<img src="${e.target.result}" class="rounded-lg object-cover shadow-md hover:shadow-xl transition-all w-[140px] h-[90px]" />`;
+      };
+      reader.readAsDataURL(gambarFile);
+    }
+    
     closeModal();
     showSuccess('Iklan berhasil diupdate!');
   }
 
   function hapusIklan(btn) {
     if (confirm('⚠️ Yakin ingin menghapus iklan ini?')) {
-      btn.closest('tr').remove();
+      const row = btn.closest('tr');
+      row.remove();
+      
+      // Update nomor urut
+      const tbody = document.getElementById('tabelIklan');
+      const rows = tbody.getElementsByTagName('tr');
+      for (let i = 0; i < rows.length; i++) {
+        rows[i].cells[0].textContent = i + 1;
+      }
+      
       showSuccess('Iklan berhasil dihapus!');
     }
   }
