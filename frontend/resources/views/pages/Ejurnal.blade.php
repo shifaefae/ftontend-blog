@@ -59,90 +59,97 @@
         <!-- Grid Layout -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <!-- Tambah Jurnal -->
-            <div class="lg:col-span-4 rounded-2xl shadow-xl card-hover p-8 flex flex-col overflow-hidden" style="height: 650px; background-color: #ffffff; border: 2px solid #4988C4;">
-                <h2 class="text-3xl font-bold mb-6 pb-4" style="color: #4988C4; border-bottom: 3px solid #4988C4;">
-                    <i class="fas fa-plus-circle mr-2"></i>
-                    Tambah Jurnal
-                </h2>
-                <div class="space-y-5 flex-1 flex flex-col">
-                    <div>
-                        <label class="block text-sm font-bold mb-3 flex items-center gap-2" style="color: #4988C4;">
-                            <i class="fas fa-heading"></i>
-                            Judul
-                        </label>
-                        <input 
-                            type="text" 
-                            id="inputJudul" 
-                            placeholder="Masukkan judul jurnal" 
-                            class="w-full px-4 py-3 rounded-xl outline-none transition-all text-base"
-                            style="border: 2px solid #4988C4; background-color: #ffffff;"
-                            onfocus="this.style.boxShadow='0 0 0 4px rgba(73, 136, 196, 0.2)'"
-                            onblur="this.style.boxShadow='none'"
-                        >
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-bold mb-3 flex items-center gap-2" style="color: #4988C4;">
-                            <i class="fas fa-align-left"></i>
-                            Deskripsi
-                        </label>
-                        <textarea 
-                            id="inputDeskripsi" 
-                            rows="1"
-                            placeholder="Masukkan deskripsi jurnal" 
-                            class="w-full px-4 py-3 rounded-xl outline-none transition-all text-base resize-none"
-                            style="border: 2px solid #4988C4; background-color: #ffffff;"
-                            onfocus="this.style.boxShadow='0 0 0 4px rgba(73, 136, 196, 0.2)'"
-                            onblur="this.style.boxShadow='none'"
-                        ></textarea>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-bold mb-3 flex items-center gap-2" style="color: #4988C4;">
-                            <i class="fas fa-user"></i>
-                            Nama Pengguna
-                        </label>
-                        <input 
-                            type="text" 
-                            id="inputUserName" 
-                            placeholder="Masukkan nama user" 
-                            class="w-full px-4 py-3 rounded-xl outline-none transition-all text-base"
-                            style="border: 2px solid #4988C4; background-color: #ffffff;"
-                            onfocus="this.style.boxShadow='0 0 0 4px rgba(73, 136, 196, 0.2)'"
-                            onblur="this.style.boxShadow='none'"
-                        >
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-bold mb-3 flex items-center gap-2" style="color: #4988C4;">
-                            <i class="fas fa-image"></i>
-                            Gambar
-                        </label>
-                        <div class="relative">
-                            <input 
-                                type="file" 
-                                id="inputGambar" 
-                                accept="image/*"
-                                class="hidden"
-                                onchange="previewGambar(event)"
-                            >
-                            <label id="labelPilihGambar" for="inputGambar" class="block w-full px-4 py-3 rounded-xl text-base cursor-pointer transition-all text-center font-medium" style="border: 2px solid #4988C4; color: #4988C4; background-color: #ffffff;" onmouseover="this.style.backgroundColor='rgba(73, 136, 196, 0.1)'" onmouseout="this.style.backgroundColor='#ffffff'">
-                                <i class="fas fa-cloud-upload-alt text-xl"></i>
-                                <span class="ml-2">Pilih gambar</span>
+            <div class="lg:col-span-4 rounded-2xl shadow-xl card-hover flex flex-col" style="height: 650px; background-color: #ffffff; border: 2px solid #4988C4;">
+                <div class="p-8 pb-4">
+                    <h2 class="text-3xl font-bold pb-4" style="color: #4988C4; border-bottom: 3px solid #4988C4;">
+                        <i class="fas fa-plus-circle mr-2"></i>
+                        Tambah Jurnal
+                    </h2>
+                </div>
+                
+                <!-- Scrollable Form Area -->
+                <div class="px-8 flex-1 overflow-y-auto scrollbar-thin">
+                    <div class="space-y-5 pb-4">
+                        <div>
+                            <label class="block text-sm font-bold mb-3 flex items-center gap-2" style="color: #4988C4;">
+                                <i class="fas fa-heading"></i>
+                                Judul
                             </label>
-                            <div id="previewContainer" class="hidden">
-                                <div class="relative">
-                                    <img id="previewImage" class="w-full h-32 object-cover rounded-xl shadow-lg" style="border: 2px solid #4988C4;">
-                                    <button type="button" onclick="hapusGambar()" class="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg transition-all">
-                                        <i class="fas fa-times"></i>
-                                    </button>
+                            <input 
+                                type="text" 
+                                id="inputJudul" 
+                                placeholder="Masukkan judul jurnal" 
+                                class="w-full px-4 py-3 rounded-xl outline-none transition-all text-base"
+                                style="border: 2px solid #4988C4; background-color: #ffffff;"
+                                onfocus="this.style.boxShadow='0 0 0 4px rgba(73, 136, 196, 0.2)'"
+                                onblur="this.style.boxShadow='none'"
+                            >
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-bold mb-3 flex items-center gap-2" style="color: #4988C4;">
+                                <i class="fas fa-align-left"></i>
+                                Deskripsi
+                            </label>
+                            <textarea 
+                                id="inputDeskripsi" 
+                                rows="3"
+                                placeholder="Masukkan deskripsi jurnal" 
+                                class="w-full px-4 py-3 rounded-xl outline-none transition-all text-base resize-none"
+                                style="border: 2px solid #4988C4; background-color: #ffffff;"
+                                onfocus="this.style.boxShadow='0 0 0 4px rgba(73, 136, 196, 0.2)'"
+                                onblur="this.style.boxShadow='none'"
+                            ></textarea>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-bold mb-3 flex items-center gap-2" style="color: #4988C4;">
+                                <i class="fas fa-user"></i>
+                                Nama Pengguna
+                            </label>
+                            <input 
+                                type="text" 
+                                id="inputUserName" 
+                                placeholder="Masukkan nama user" 
+                                class="w-full px-4 py-3 rounded-xl outline-none transition-all text-base"
+                                style="border: 2px solid #4988C4; background-color: #ffffff;"
+                                onfocus="this.style.boxShadow='0 0 0 4px rgba(73, 136, 196, 0.2)'"
+                                onblur="this.style.boxShadow='none'"
+                            >
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-bold mb-3 flex items-center gap-2" style="color: #4988C4;">
+                                <i class="fas fa-image"></i>
+                                Gambar
+                            </label>
+                            <div class="relative">
+                                <input 
+                                    type="file" 
+                                    id="inputGambar" 
+                                    accept="image/*"
+                                    class="hidden"
+                                    onchange="previewGambar(event)"
+                                >
+                                <label id="labelPilihGambar" for="inputGambar" class="block w-full px-4 py-3 rounded-xl text-base cursor-pointer transition-all text-center font-medium" style="border: 2px solid #4988C4; color: #4988C4; background-color: #ffffff;" onmouseover="this.style.backgroundColor='rgba(73, 136, 196, 0.1)'" onmouseout="this.style.backgroundColor='#ffffff'">
+                                    <i class="fas fa-cloud-upload-alt text-xl"></i>
+                                    <span class="ml-2">Pilih gambar</span>
+                                </label>
+                                <div id="previewContainer" class="hidden mt-3">
+                                    <div class="relative">
+                                        <img id="previewImage" class="w-full h-48 object-contain rounded-xl shadow-lg" style="border: 2px solid #4988C4; background-color: #f8f9fa;">
+                                        <button type="button" onclick="hapusGambar()" class="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg transition-all">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="flex-1"></div>
-                    
+                </div>
+                
+                <!-- Fixed Button Area -->
+                <div class="p-8 pt-4">
                     <button 
                         onclick="tambahJurnal()" 
                         class="w-full text-white font-bold py-3 rounded-xl transform hover:scale-105 transition-all shadow-lg hover:shadow-2xl text-base"
@@ -291,7 +298,7 @@
 
     <!-- Modal Edit Jurnal -->
     <div id="modalEditJurnal" class="hidden fixed inset-0 flex items-center justify-center z-50 p-4" style="background-color: rgba(73, 136, 196, 0.6); backdrop-filter: blur(8px);">
-        <div class="rounded-3xl shadow-2xl max-w-lg w-full transform transition-all max-h-[90vh] overflow-y-auto" style="background-color: #ffffff;">
+        <div class="rounded-3xl shadow-2xl max-w-lg w-full transform transition-all max-h-[90vh] overflow-y-auto scrollbar-thin" style="background-color: #ffffff;">
             <div class="text-white p-6 rounded-t-3xl sticky top-0" style="background-color: #4988C4;">
                 <h3 class="text-2xl font-bold flex items-center gap-3">
                     <i class="fas fa-edit"></i>
@@ -344,7 +351,7 @@
                         </label>
                     </div>
                     <div id="editPreviewContainer" class="mt-4">
-                        <img id="editPreviewImage" class="w-full h-40 object-cover rounded-xl shadow-lg" style="border: 2px solid #4988C4;">
+                        <img id="editPreviewImage" class="w-full h-48 object-contain rounded-xl shadow-lg" style="border: 2px solid #4988C4; background-color: #f8f9fa;">
                     </div>
                 </div>
                 
@@ -372,7 +379,7 @@
     <div id="modalLihatGambar" class="hidden fixed inset-0 flex items-center justify-center z-50 p-4" style="background-color: rgba(73, 136, 196, 0.8); backdrop-filter: blur(8px);" onclick="tutupModalLihatGambar()">
         <div class="max-w-4xl w-full">
             <div class="rounded-3xl p-6" style="background-color: #ffffff;">
-                <img id="gambarModal" class="w-full h-auto rounded-xl">
+                <img id="gambarModal" class="w-full h-auto max-h-[80vh] object-contain rounded-xl">
             </div>
         </div>
     </div>

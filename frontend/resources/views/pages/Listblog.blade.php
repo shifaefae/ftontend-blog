@@ -271,6 +271,28 @@
         .btn:hover {
             transform: translateY(-2px);
         }
+
+        /* Style untuk foto blog */
+        .blog-foto {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .blog-foto-placeholder {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
     </style>
 @endpush
 
@@ -285,6 +307,7 @@
         <thead>
             <tr>
                 <th>No</th>
+                <th>Foto</th>
                 <th>Judul</th>
                 <th>Penulis</th>
                 <th>Kategori</th>
@@ -297,6 +320,15 @@
             @forelse($blogs as $index => $blog)
             <tr>
                 <td>{{ $index + 1 }}</td>
+                <td>
+                    @if(isset($blog->foto) && $blog->foto)
+                        <img src="{{ asset('storage/' . $blog->foto) }}" alt="{{ $blog->judul }}" class="blog-foto">
+                    @else
+                        <div class="blog-foto-placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                    @endif
+                </td>
                 <td><strong>{{ $blog->judul }}</strong></td>
                 <td>{{ $blog->penulis }}</td>
                 <td><span class="badge" style="background: #764ba2;">{{ $blog->kategori }}</span></td>
@@ -316,7 +348,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="6" style="text-align: center; padding: 20px;">Belum ada data blog.</td>
+                <td colspan="7" style="text-align: center; padding: 20px;">Belum ada data blog.</td>
             </tr>
             @endforelse
         </tbody>
