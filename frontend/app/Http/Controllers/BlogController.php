@@ -9,7 +9,10 @@ class BlogController extends Controller
 {
     public function index()
     {
-        return view('pages.blog.list');
+        $blogs = [
+            (object) ['id' => 1, 'judul' => 'Judul Blog 1', 'penulis' => 'Penulis 1', 'kategori' => 'Tutorial', 'status' => 'published'],
+        ]; // Fetch blog posts from the database or model
+        return view('pages.Listblog', compact('blogs'));
     }
 
     

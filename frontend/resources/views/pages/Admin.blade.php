@@ -26,7 +26,7 @@
         <div class="flex justify-between items-center mb-8">
             <div>
                 <h1 class="text-4xl font-bold text-gray-800 flex items-center gap-3">
-                    <i class="fas fa-users-cog text-purple-600"></i>
+                    <i class="fas fa-users-cog text-[#4988C4]"></i>
                     Kelola Admin
                 </h1>
             </div>
@@ -43,7 +43,7 @@
                 <div class="relative">
                     <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                     <input type="text" placeholder="Cari admin..." 
-                        class="pl-12 pr-4 py-2 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-200 outline-none transition-all">
+                        class="pl-12 pr-4 py-2 border-2 border-gray-200 rounded-xl focus:border-[#4988C4] focus:ring-4 focus:ring-[#4988C4]/20 outline-none transition-all">
                 </div>
             </div>
 
@@ -60,10 +60,10 @@
                         </tr>
                     </thead>
                     <tbody id="tabelAdmin">
-                        <tr class="border-b hover:bg-purple-50 transition-all">
+                        <tr class="border-b hover:bg-[#4988C4]/10 transition-all">
                             <td class="py-4 px-4 font-semibold">1</td>
                             <td class="py-4 px-4">
-                                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                <div class="w-12 h-12 bg-[#4988C4] rounded-full flex items-center justify-center text-white font-bold text-lg">
                                     AD
                                 </div>
                             </td>
@@ -73,18 +73,18 @@
                                 <span class="bg-gray-200 px-3 py-1 rounded-full text-xs font-mono">••••••••</span>
                             </td>
                             <td class="py-4 px-4 text-center">
-                                <button onclick="editAdmin(1, 'Administrator', 'admin@example.com')" class="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-4 py-2 rounded-lg font-semibold mr-2 shadow-md hover:shadow-lg transition-all">
+                                <button onclick="editAdmin(1, 'Administrator', 'admin@example.com')" class="bg-[#4988C4] hover:bg-[#3a6fa0] text-white px-4 py-2 rounded-lg font-semibold mr-2 shadow-md hover:shadow-lg transition-all">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button onclick="hapusAdmin(1)" class="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all">
+                                <button onclick="hapusAdmin(1)" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </td>
                         </tr>
-                        <tr class="border-b hover:bg-purple-50 transition-all">
+                        <tr class="border-b hover:bg-[#4988C4]/10 transition-all">
                             <td class="py-4 px-4 font-semibold">2</td>
                             <td class="py-4 px-4">
-                                <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-teal-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                <div class="w-12 h-12 bg-[#4988C4] rounded-full flex items-center justify-center text-white font-bold text-lg">
                                     JD
                                 </div>
                             </td>
@@ -94,18 +94,18 @@
                                 <span class="bg-gray-200 px-3 py-1 rounded-full text-xs font-mono">••••••••</span>
                             </td>
                             <td class="py-4 px-4 text-center">
-                                <button onclick="editAdmin(2, 'John Doe', 'john.doe@example.com')" class="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-4 py-2 rounded-lg font-semibold mr-2 shadow-md hover:shadow-lg transition-all">
+                                <button onclick="editAdmin(2, 'John Doe', 'john.doe@example.com')" class="bg-[#4988C4] hover:bg-[#3a6fa0] text-white px-4 py-2 rounded-lg font-semibold mr-2 shadow-md hover:shadow-lg transition-all">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button onclick="hapusAdmin(2)" class="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all">
+                                <button onclick="hapusAdmin(2)" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </td>
                         </tr>
-                        <tr class="hover:bg-purple-50 transition-all">
+                        <tr class="hover:bg-[#4988C4]/10 transition-all">
                             <td class="py-4 px-4 font-semibold">3</td>
                             <td class="py-4 px-4">
-                                <div class="w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                <div class="w-12 h-12 bg-[#4988C4] rounded-full flex items-center justify-center text-white font-bold text-lg">
                                     JS
                                 </div>
                             </td>
@@ -115,10 +115,10 @@
                                 <span class="bg-gray-200 px-3 py-1 rounded-full text-xs font-mono">••••••••</span>
                             </td>
                             <td class="py-4 px-4 text-center">
-                                <button onclick="editAdmin(3, 'Jane Smith', 'jane.smith@example.com')" class="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-4 py-2 rounded-lg font-semibold mr-2 shadow-md hover:shadow-lg transition-all">
+                                <button onclick="editAdmin(3, 'Jane Smith', 'jane.smith@example.com')" class="bg-[#4988C4] hover:bg-[#3a6fa0] text-white px-4 py-2 rounded-lg font-semibold mr-2 shadow-md hover:shadow-lg transition-all">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button onclick="hapusAdmin(3)" class="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all">
+                                <button onclick="hapusAdmin(3)" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </td>
@@ -138,15 +138,15 @@
             <div class="p-6 space-y-4">
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Nama Lengkap</label>
-                    <input type="text" id="tambahNama" placeholder="Masukkan nama lengkap" class="w-full px-4 py-3 border-2 rounded-xl outline-none focus:border-purple-500">
+                    <input type="text" id="tambahNama" placeholder="Masukkan nama lengkap" class="w-full px-4 py-3 border-2 rounded-xl outline-none focus:border-[#4988C4]">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Email/Username</label>
-                    <input type="email" id="tambahEmail" placeholder="email@example.com" class="w-full px-4 py-3 border-2 rounded-xl outline-none focus:border-purple-500">
+                    <input type="email" id="tambahEmail" placeholder="email@example.com" class="w-full px-4 py-3 border-2 rounded-xl outline-none focus:border-[#4988C4]">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
-                    <input type="password" id="tambahPassword" placeholder="Masukkan password" class="w-full px-4 py-3 border-2 rounded-xl outline-none focus:border-purple-500">
+                    <input type="password" id="tambahPassword" placeholder="Masukkan password" class="w-full px-4 py-3 border-2 rounded-xl outline-none focus:border-[#4988C4]">
                 </div>
                 <div class="flex gap-3 pt-2">
                     <button onclick="tutupTambahModal()" class="flex-1 bg-gray-400 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all">
@@ -163,28 +163,28 @@
     <!-- Modal Edit -->
     <div id="modalEdit" class="hidden fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full">
-            <div class="bg-gradient-to-r from-blue-600 to-cyan-600 text-white p-6 rounded-t-3xl">
+            <div class="bg-[#4988C4] text-white p-6 rounded-t-3xl">
                 <h3 class="text-2xl font-bold"><i class="fas fa-edit mr-2"></i>Edit Admin</h3>
             </div>
             <div class="p-6 space-y-4">
                 <input type="hidden" id="editId">
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Nama Lengkap</label>
-                    <input type="text" id="editNama" class="w-full px-4 py-3 border-2 rounded-xl outline-none focus:border-blue-500">
+                    <input type="text" id="editNama" class="w-full px-4 py-3 border-2 rounded-xl outline-none focus:border-[#4988C4]">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Email/Username</label>
-                    <input type="email" id="editEmail" class="w-full px-4 py-3 border-2 rounded-xl outline-none focus:border-blue-500">
+                    <input type="email" id="editEmail" class="w-full px-4 py-3 border-2 rounded-xl outline-none focus:border-[#4988C4]">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">Password Baru (opsional)</label>
-                    <input type="password" id="editPassword" placeholder="Kosongkan jika tidak diubah" class="w-full px-4 py-3 border-2 rounded-xl outline-none focus:border-blue-500">
+                    <input type="password" id="editPassword" placeholder="Kosongkan jika tidak diubah" class="w-full px-4 py-3 border-2 rounded-xl outline-none focus:border-[#4988C4]">
                 </div>
                 <div class="flex gap-3 pt-2">
                     <button onclick="tutupEditModal()" class="flex-1 bg-gray-400 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all">
                         <i class="fas fa-times mr-2"></i>Batal
                     </button>
-                    <button onclick="simpanEdit()" class="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all">
+                    <button onclick="simpanEdit()" class="flex-1 bg-[#4988C4] hover:bg-[#3a6fa0] text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all">
                         <i class="fas fa-check mr-2"></i>Update
                     </button>
                 </div>
@@ -206,7 +206,7 @@
     <script>
         let counter = 4;
         let currentId = null;
-        const colors = ['from-blue-500 to-purple-600', 'from-green-500 to-teal-600', 'from-pink-500 to-rose-600', 'from-orange-500 to-red-600', 'from-purple-500 to-pink-600'];
+        const colors = ['bg-[#4988C4]', 'bg-[#4988C4]', 'bg-[#4988C4]', 'bg-[#4988C4]', 'bg-[#4988C4]'];
 
         function getInitials(name) {
             return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
@@ -233,16 +233,16 @@
                 return;
             }
 
-            const color = colors[Math.floor(Math.random() * colors.length)];
+            const color = 'bg-[#4988C4]';
             const initials = getInitials(nama);
 
             const tbody = document.getElementById('tabelAdmin');
             const tr = document.createElement('tr');
-            tr.className = 'border-b hover:bg-purple-50 transition-all';
+            tr.className = 'border-b hover:bg-[#4988C4]/10 transition-all';
             tr.innerHTML = `
                 <td class="py-4 px-4 font-semibold">${counter}</td>
                 <td class="py-4 px-4">
-                    <div class="w-12 h-12 bg-gradient-to-br ${color} rounded-full flex items-center justify-center text-white font-bold text-lg">
+                    <div class="w-12 h-12 ${color} rounded-full flex items-center justify-center text-white font-bold text-lg">
                         ${initials}
                     </div>
                 </td>
@@ -252,10 +252,10 @@
                     <span class="bg-gray-200 px-3 py-1 rounded-full text-xs font-mono">••••••••</span>
                 </td>
                 <td class="py-4 px-4 text-center">
-                    <button onclick="editAdmin(${counter}, '${nama}', '${email}')" class="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-4 py-2 rounded-lg font-semibold mr-2 shadow-md hover:shadow-lg transition-all">
+                    <button onclick="editAdmin(${counter}, '${nama}', '${email}')" class="bg-[#4988C4] hover:bg-[#3a6fa0] text-white px-4 py-2 rounded-lg font-semibold mr-2 shadow-md hover:shadow-lg transition-all">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button onclick="hapusAdmin(${counter})" class="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all">
+                    <button onclick="hapusAdmin(${counter})" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all">
                         <i class="fas fa-trash"></i>
                     </button>
                 </td>

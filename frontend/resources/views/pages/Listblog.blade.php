@@ -2,7 +2,8 @@
 
 @section('title', 'List Blog - Portal Blog')
 
-@section('content')
+
+@push('styles')
 
     <style>
         body {
@@ -271,146 +272,71 @@
             transform: translateY(-2px);
         }
     </style>
-</head>
-<body>
-    <div class="header">
-        <h1 class="title">📚 List Blog</h1>
-        <!-- <button class="btn-add">➕ Tambah Blog</button> -->
-        <a href="{{ route('blog.tambah') }}"><button class="btn-add">➕ Tambah Blog</button></a>
-    </div>
+@endpush
 
-    <div class="table-container">
-        <div class="search-box">
-            <h2 style="font-size: 20px; color: #2d3748; margin: 0;">📋 Daftar Blog</h2>
-            <div style="position: relative;">
-                <span style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%);">🔍</span>
-                <input type="text" class="search-input" placeholder="Cari blog..." onkeyup="searchTable()">
-            </div>
-        </div>
+@section('content')
+<div class="header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1 style="font-size: 32px; margin-bottom: 30px; font-weight: 700; color: #2d3748;">List Blog</h1>
+    <a href="{{ route('blog.tambah') }}" class="btn-add" style="padding: 12px 25px; background: #667eea; color: white; text-decoration: none; border-radius: 8px;"> Tambah Blog</a>
+</div>
 
-        <table id="blogTable">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Judul</th>
-                    <th>Kategori</th>
-                    <th>Penulis</th>
-                    <th>Tanggal</th>
-                    <th>Views</th>
-                    <th style="text-align: center;">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td style="font-weight: 600; color: #4a5568;">1</td>
-                    <td style="font-weight: 500; color: #2d3748;">Tutorial Laravel untuk Pemula</td>
-                    <td><span class="badge badge-tutorial">Tutorial</span></td>
-                    <td style="color: #4a5568;">Admin</td>
-                    <td style="color: #718096;">10/01/2026</td>
-                    <td style="font-weight: 500; color: #4a5568;">👁 1,250</td>
-                    <td style="text-align: center;">
-                        <div class="dropdown">
-                            <button class="menu-btn" onclick="toggleDropdown(1)">⋮</button>
-                            <div id="dropdown-1" class="dropdown-menu">
-                                <a href="#" class="dropdown-item">📝 Edit</a>
-                                <a href="#" class="dropdown-item delete" onclick="confirmDelete(1)">🗑️ Hapus</a>
-                            </div>
+<div class="table-container">
+    <table id="blogTable">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Judul</th>
+                <th>Penulis</th>
+                <th>Kategori</th>
+                <th>Status</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{-- Loop data dari Controller --}}
+            @forelse($blogs as $index => $blog)
+            <tr>
+                <td>{{ $index + 1 }}</td>
+                <td><strong>{{ $blog->judul }}</strong></td>
+                <td>{{ $blog->penulis }}</td>
+                <td><span class="badge" style="background: #764ba2;">{{ $blog->kategori }}</span></td>
+                <td>{{ ucfirst($blog->status) }}</td>
+                <td>
+                    <div class="dropdown">
+                        <button onclick="toggleDropdown({{ $blog->id }})" style="cursor:pointer;">⋮</button>
+                        <div id="dropdown-{{ $blog->id }}" class="dropdown-menu">
+                            <a href="#" style="display:block; padding: 10px; text-decoration:none; color:black;">Edit</a>
+                            <form action="#" method="POST" style="display:inline;">
+                                @csrf @method('DELETE')
+                                <button type="submit" style="display:block; width:100%; text-align:left; padding:10px; border:none; background:none; color:red; cursor:pointer;">Hapus</button>
+                            </form>
                         </div>
-                    </td>
-                </tr>
-           </tbody>
-        </table>
-    </div>
-
-    <!-- Delete Modal -->
-    <div id="deleteModal" class="modal">
-        <div class="modal-content modal-delete">
-            <div style="font-size: 56px; margin-bottom: 20px;">⚠️</div>
-            <h3 style="margin: 0 0 15px 0; color: #2d3748; font-size: 22px;">Konfirmasi Hapus</h3>
-            <p style="color: #4a5568; margin: 0;">Anda yakin ingin menghapus blog ini?</p>
-            <div class="btn-group">
-                <button class="btn btn-cancel" onclick="closeDeleteModal()">Batal</button>
-                <button class="btn btn-delete" onclick="executeDelete()">Ya, Hapus</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Success Modal -->
-    <div id="successModal" class="modal">
-        <div class="modal-content modal-success">
-            <div style="font-size: 64px; color: #10b981; margin-bottom: 15px;">✓</div>
-            <h3 style="margin: 0; color: #2d3748; font-size: 22px;">Blog Berhasil Dihapus</h3>
-            <div class="btn-group">
-                <button class="btn btn-ok" onclick="closeSuccessModal()">OK</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function searchTable() {
-            const input = document.querySelector('.search-input');
-            const filter = input.value.toUpperCase();
-            const table = document.getElementById('blogTable');
-            const tr = table.getElementsByTagName('tr');
-            
-            for (let i = 1; i < tr.length; i++) {
-                let td = tr[i].getElementsByTagName('td');
-                let found = false;
-                
-                for (let j = 0; j < td.length - 1; j++) {
-                    if (td[j]) {
-                        let txtValue = td[j].textContent || td[j].innerText;
-                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                            found = true;
-                            break;
-                        }
-                    }
-                }
-                
-                tr[i].style.display = found ? '' : 'none';
-            }
-        }
-
-        function toggleDropdown(id) {
-            event.stopPropagation();
-            const allDropdowns = document.querySelectorAll('.dropdown-menu');
-            const currentDropdown = document.getElementById('dropdown-' + id);
-            
-            allDropdowns.forEach(dropdown => {
-                if (dropdown !== currentDropdown) {
-                    dropdown.classList.remove('show');
-                }
-            });
-            
-            currentDropdown.classList.toggle('show');
-        }
-
-        function confirmDelete(id) {
-            document.getElementById('deleteModal').classList.add('show');
-            const dropdown = document.getElementById('dropdown-' + id);
-            if (dropdown) dropdown.classList.remove('show');
-        }
-
-        function closeDeleteModal() {
-            document.getElementById('deleteModal').classList.remove('show');
-        }
-
-        function executeDelete() {
-            closeDeleteModal();
-            document.getElementById('successModal').classList.add('show');
-        }
-
-        function closeSuccessModal() {
-            document.getElementById('successModal').classList.remove('show');
-        }
-
-        document.addEventListener('click', function(event) {
-            if (!event.target.closest('.dropdown')) {
-                document.querySelectorAll('.dropdown-menu').forEach(dropdown => {
-                    dropdown.classList.remove('show');
-                });
-            }
-        });
-    </script>
-
+                    </div>
+                </td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 20px;">Belum ada data blog.</td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
+</div>
 @endsection
+
+@push('scripts')
+<script>
+    function toggleDropdown(id) {
+        event.stopPropagation();
+        const current = document.getElementById('dropdown-' + id);
+        document.querySelectorAll('.dropdown-menu').forEach(d => {
+            if (d !== current) d.classList.remove('show');
+        });
+        current.classList.toggle('show');
+    }
+
+    window.onclick = function() {
+        document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
+    }
+</script>
+@endpush

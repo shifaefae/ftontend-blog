@@ -5,8 +5,7 @@
 @section('content')
 <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
 
-<div class="tambah-blog-container" style="padding: 30px; font-family: 'Segoe UI', sans-serif; max-width: 1200px; margin: 0 auto; background: #f5f7fa; min-height: 100vh;">
-    
+<div class="tambah-blog-container" style="padding: 30px; font-family: 'Segoe UI', sans-serif; max-width: 1200px; margin: 0 auto; background: #f5f7fa; min-height: 100vh;">   
     <h1 style="font-size: 32px; margin-bottom: 30px; font-weight: 700; color: #2d3748;">Tambah Blog</h1>
     
     <form id="blogForm" action="{{ route('blog.store') }}" method="POST" enctype="multipart/form-data">
