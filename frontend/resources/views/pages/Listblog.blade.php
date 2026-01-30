@@ -8,7 +8,7 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: #ffffff;
             padding: 30px;
             margin: 0;
         }
@@ -26,26 +26,24 @@
             font-size: 32px;
             margin: 0;
             font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #333333;
         }
 
         .btn-add {
             padding: 14px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #4988C4;
             color: white;
             border: none;
             border-radius: 12px;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 6px 20px rgba(73, 136, 196, 0.4);
             transition: all 0.3s;
         }
 
         .btn-add:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+            box-shadow: 0 10px 30px rgba(73, 136, 196, 0.5);
         }
 
         .table-container {
@@ -54,6 +52,7 @@
             padding: 25px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             position: relative;
+            border: 1px solid #e0e0e0;
         }
 
         .table-container::before {
@@ -63,7 +62,7 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background: #4988C4;
             border-radius: 16px 16px 0 0;
         }
 
@@ -86,8 +85,8 @@
 
         .search-input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+            border-color: #4988C4;
+            box-shadow: 0 0 0 4px rgba(73, 136, 196, 0.15);
         }
 
         table {
@@ -96,7 +95,7 @@
         }
 
         thead tr {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #4988C4;
         }
 
         th {
@@ -113,12 +112,13 @@
         }
 
         tbody tr:hover {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%);
+            background: #f8f9fa;
         }
 
         td {
             padding: 16px 18px;
             font-size: 14px;
+            color: #333333;
         }
 
         .badge {
@@ -127,22 +127,23 @@
             font-size: 12px;
             font-weight: 600;
             color: white;
+            background: #4988C4;
         }
 
-        .badge-tutorial { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .badge-webdev { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
-        .badge-js { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); }
-        .badge-backend { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
-        .badge-php { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); }
+        .badge-tutorial { background: #4988C4; }
+        .badge-webdev { background: #4988C4; }
+        .badge-js { background: #4988C4; }
+        .badge-backend { background: #4988C4; }
+        .badge-php { background: #4988C4; }
 
         .menu-btn {
             padding: 8px 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #4988C4;
             color: white;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 2px 8px rgba(73, 136, 196, 0.3);
             transition: all 0.3s;
         }
 
@@ -187,8 +188,17 @@
             background: #f8f9fa;
         }
 
+        .dropdown-item.edit:hover {
+            background: #e8f4f8;
+            color: #4988C4;
+        }
+
         .dropdown-item.delete {
             color: #f56565;
+        }
+
+        .dropdown-item.delete:hover {
+            background: #fee;
         }
 
         .modal {
@@ -230,11 +240,11 @@
         }
 
         .modal-delete::before {
-            background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+            background: #ef4444;
         }
 
         .modal-success::before {
-            background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+            background: #10b981;
         }
 
         .btn-group {
@@ -259,12 +269,12 @@
         }
 
         .btn-delete {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            background: #ef4444;
             color: white;
         }
 
         .btn-ok {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            background: #10b981;
             color: white;
         }
 
@@ -284,7 +294,7 @@
         .blog-foto-placeholder {
             width: 60px;
             height: 60px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #4988C4;
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -293,13 +303,29 @@
             font-size: 24px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
+
+        /* Style untuk tombol dropdown (titik 3) */
+        .dropdown-toggle {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px 10px;
+            color: #666666;
+            font-weight: bold;
+            transition: color 0.2s ease;
+        }
+
+        .dropdown-toggle:hover {
+            color: #4988C4;
+        }
     </style>
 @endpush
 
 @section('content')
 <div class="header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-    <h1 style="font-size: 32px; margin-bottom: 30px; font-weight: 700; color: #2d3748;">List Blog</h1>
-    <a href="{{ route('blog.tambah') }}" class="btn-add" style="padding: 12px 25px; background: #667eea; color: white; text-decoration: none; border-radius: 8px;"> Tambah Blog</a>
+    <h1 style="font-size: 32px; margin-bottom: 30px; font-weight: 700; color: #333333;">List Blog</h1>
+    <a href="{{ route('blog.tambah') }}" class="btn-add" style="padding: 12px 25px; background: #4988C4; color: white; text-decoration: none; border-radius: 8px;"> Tambah Blog</a>
 </div>
 
 <div class="table-container">
@@ -331,16 +357,16 @@
                 </td>
                 <td><strong>{{ $blog->judul }}</strong></td>
                 <td>{{ $blog->penulis }}</td>
-                <td><span class="badge" style="background: #764ba2;">{{ $blog->kategori }}</span></td>
+                <td><span class="badge" style="background: #4988C4;">{{ $blog->kategori }}</span></td>
                 <td>{{ ucfirst($blog->status) }}</td>
                 <td>
                     <div class="dropdown">
-                        <button onclick="toggleDropdown({{ $blog->id }})" style="cursor:pointer;">⋮</button>
+                        <button class="dropdown-toggle" onclick="toggleDropdown({{ $blog->id }})">⋮</button>
                         <div id="dropdown-{{ $blog->id }}" class="dropdown-menu">
-                            <a href="#" style="display:block; padding: 10px; text-decoration:none; color:black;">Edit</a>
-                            <form action="#" method="POST" style="display:inline;">
+                            <a href="#" class="dropdown-item edit">Edit</a>
+                            <form action="#" method="POST" style="display:inline; margin: 0;">
                                 @csrf @method('DELETE')
-                                <button type="submit" style="display:block; width:100%; text-align:left; padding:10px; border:none; background:none; color:red; cursor:pointer;">Hapus</button>
+                                <button type="submit" class="dropdown-item delete" style="width:100%; text-align:left; border:none; background:none; cursor:pointer;">Hapus</button>
                             </form>
                         </div>
                     </div>

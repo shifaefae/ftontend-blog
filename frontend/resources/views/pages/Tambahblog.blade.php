@@ -62,7 +62,7 @@
                     </div>
                     
                     <button type="submit" id="submit-btn" 
-                            style="padding: 20px; border-radius: 12px; border: none; background: #667eea; color: white; font-weight: bold; cursor: pointer;">
+                            style="padding: 20px; border-radius: 12px; border: none; background: #4988C4; color: white; font-weight: bold; cursor: pointer;">
                         Upload Blog
                     </button>
                 </div>
