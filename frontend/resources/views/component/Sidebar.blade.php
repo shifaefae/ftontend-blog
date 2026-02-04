@@ -61,7 +61,7 @@
                    group-[.collapsed]:justify-center group-[.collapsed]:px-2">
                    
                     <i class="fas fa-tags w-5 text-lg"></i>
-                    <span class="ml-3 menu-text font-medium group-[.collapsed]:hidden">Kategori</span>
+                    <span class="ml-3 menu-text font-medium group-[.collapsed]:hidden">Kategori & Tag</span>
                 </a>
             </li>
 
