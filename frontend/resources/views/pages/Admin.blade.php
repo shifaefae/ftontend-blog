@@ -5,8 +5,7 @@
 @section('content')
 
 <link rel="stylesheet" href="{{ asset('css/admin.css')}}">
-<link rel="stylesheet" href="{{ asset('css/admin-kelola.css')}}">
-
+</head>
 <body class="p-6">
     <div class="max-w-7xl mx-auto">
         <!-- Header -->
