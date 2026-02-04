@@ -4,23 +4,9 @@
 
 @section('content')
 
-    <!--<style>
-        body {
-            background: #f3f4f6;
-        }
-        .gradient-bg {
-            background: linear-gradient(135deg, #4988C4 0%, #4988C4 100%);
-        }
-        .card-hover {
-            transition: all 0.3s ease;
-        }
-        .card-hover:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        }
-    </style> -->
 <link rel="stylesheet" href="{{ asset('css/admin.css')}}">
-</head>
+<link rel="stylesheet" href="{{ asset('css/admin-kelola.css')}}">
+
 <body class="p-6">
     <div class="max-w-7xl mx-auto">
         <!-- Header -->

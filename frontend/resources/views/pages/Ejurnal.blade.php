@@ -4,46 +4,8 @@
 
 @section('content')
 
-    <!--<style>
-        body {
-            background: #ffffff;
-            min-height: 100vh;
-        }
-        
-        /* Custom scrollbar */
-        .scrollbar-thin::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        .scrollbar-thin::-webkit-scrollbar-track {
-            background: #f3f4f6;
-            border-radius: 10px;
-        }
-        .scrollbar-thin::-webkit-scrollbar-thumb {
-            background: #4988C4;
-            border-radius: 10px;
-        }
-        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-            background: #3a6ea0;
-        }
-        
-        /* Sticky header untuk tabel */
-        .sticky-header {
-            position: sticky;
-            top: 0;
-            background: white;
-            z-index: 10;
-        }
+<link rel="stylesheet" href="{{ asset('css/ejurnal.css')}}">
 
-        .card-hover {
-            transition: all 0.3s ease;
-        }
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(73, 136, 196, 0.3);
-        }
-    </style>-->
-    <link rel="stylesheet" href="{{ asset('css/ejurnal.css')}}"></head>
 <body class="p-6">
     <div class="max-w-7xl mx-auto">
         <!-- Header -->
@@ -384,7 +346,7 @@
         </div>
     </div>
 
-    <!--<script>
+    <script>
         let jurnalCounter = 4;
         let currentEditId = null;
         let currentImage = null;
@@ -566,6 +528,6 @@
                 tutupModalEditJurnal();
             }
         });
-    </script>-->
+    </script>
 
 @endsection
