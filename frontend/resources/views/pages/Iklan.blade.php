@@ -62,11 +62,9 @@
         <div class="lg:col-span-2 bg-white rounded-2xl shadow p-8 relative">
             <div class="absolute top-0 left-0 w-full h-1 bg-[#4988C4] rounded-t-2xl"></div>
 
-            <!-- TITLE + SEARCH (MODEL KAPSUL) -->
             <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
                 <h2 class="text-2xl font-bold text-[#4988C4]">Daftar Iklan</h2>
 
-                <!-- SEARCH SESUAI GAMBAR -->
                 <div class="relative w-72">
                     <span class="absolute left-5 top-1/2 -translate-y-1/2 text-[#4988C4] text-lg">
                         <i class="fas fa-search"></i>
@@ -74,14 +72,11 @@
                     <input
                         type="text"
                         id="searchIklan"
-                        placeholder="Cari jurnal..."
+                        placeholder="Cari iklan..."
                         onkeyup="filterIklan()"
-                        class="w-full pl-12 pr-5 py-3
-                               rounded-full
+                        class="w-full pl-12 pr-5 py-3 rounded-full
                                border-2 border-[#4988C4]
-                               text-gray-700
-                               focus:outline-none
-                               focus:ring-2 focus:ring-[#4988C4]/40">
+                               focus:outline-none focus:ring-2 focus:ring-[#4988C4]/40">
                 </div>
             </div>
 
@@ -107,12 +102,11 @@
 
                 <div class="flex gap-3">
                     <button onclick="prevPage()"
-                        class="px-5 py-2 rounded-xl border border-gray-300">
+                        class="px-5 py-2 rounded-xl border">
                         Prev
                     </button>
                     <button onclick="nextPage()"
-                        class="px-5 py-2 rounded-xl border border-[#4988C4]
-                               text-[#4988C4] hover:bg-blue-50">
+                        class="px-5 py-2 rounded-xl border text-[#4988C4]">
                         Next
                     </button>
                 </div>
@@ -123,23 +117,25 @@
 </div>
 
 <script>
-/* ================= DATA ================= */
-let dataIklan = Array.from({ length: 20 }, (_, i) => ({
-    judul: 'Iklan ' + (i + 1),
-    tipe: '1:1 Slide',
-    link: 'https://example.com',
-    gambar: 'https://via.placeholder.com/150'
-}));
+/* ================= DATA DUMMY (25 DATA) ================= */
+const dataIklan = [
+    ...Array.from({ length: 25 }, (_, i) => ({
+        judul: `Iklan Promo ${i + 1}`,
+        tipe: i % 3 === 0 ? '1:1 Slide' : i % 3 === 1 ? '3:1 Kanan' : '3:1 Kiri',
+        link: 'https://example.com/iklan-' + (i + 1),
+        gambar: `https://picsum.photos/seed/iklan${i}/200/200`
+    }))
+];
 
 let currentPage = 1;
-const perPage = 10;
+const perPage = 10; // ✅ 10 DATA PER HALAMAN
 let keyword = '';
 
 document.addEventListener('DOMContentLoaded', renderTable);
 
 /* ================= SEARCH ================= */
 function filterIklan() {
-    keyword = document.getElementById('searchIklan').value.toLowerCase();
+    keyword = searchIklan.value.toLowerCase();
     currentPage = 1;
     renderTable();
 }
@@ -152,7 +148,7 @@ function previewGambar(e) {
 
 /* ================= ADD ================= */
 function tambahIklan() {
-    dataIklan.push({
+    dataIklan.unshift({
         judul: inputJudul.value,
         tipe: inputTipe.value,
         link: inputLink.value,
@@ -175,17 +171,19 @@ function renderTable() {
 
     filtered.slice(start, start + perPage).forEach((d, i) => {
         tabelIklan.innerHTML += `
-        <tr class="hover:bg-blue-50">
+        <tr class="border-b hover:bg-blue-50">
             <td class="p-4 text-center">${start + i + 1}</td>
-            <td class="p-4 font-semibold text-[#4988C4]">${d.judul}</td>
-            <td class="p-4 text-center font-bold text-[#4988C4]">${d.tipe}</td>
-            <td class="p-4 text-center text-[#4988C4]">
-                <a href="${d.link}" target="_blank" class="underline">${d.link}</a>
+            <td class="p-4 font-semibold">${d.judul}</td>
+            <td class="p-4 text-center text-[#4988C4] font-bold">${d.tipe}</td>
+            <td class="p-4 text-center">
+                <a href="${d.link}" target="_blank" class="underline text-[#4988C4]">
+                    ${d.link}
+                </a>
             </td>
             <td class="p-4 text-center">
-                <img src="${d.gambar}" class="w-20 h-20 object-cover rounded mx-auto">
+                <img src="${d.gambar}" class="w-20 h-20 rounded object-cover mx-auto">
             </td>
-            <td class="p-4 text-center">⋮</td>
+            <td class="p-4 text-center text-xl">⋮</td>
         </tr>`;
     });
 
@@ -201,7 +199,12 @@ function prevPage() {
 }
 
 function nextPage() {
-    const totalPage = Math.ceil(dataIklan.length / perPage);
+    const totalPage = Math.ceil(
+        dataIklan.filter(d =>
+            d.judul.toLowerCase().includes(keyword) ||
+            d.tipe.toLowerCase().includes(keyword)
+        ).length / perPage
+    );
     if (currentPage < totalPage) {
         currentPage++;
         renderTable();
