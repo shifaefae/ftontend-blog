@@ -24,12 +24,14 @@
 
         <div class="dropdown-menu" id="dropdownMenu">
 
-            <a href="#" class="dropdown-item">
+            {{-- PROFILE --}}
+            <a href="{{ route('profile') }}" class="dropdown-item">
                 <i class="fas fa-user"></i>
                 <span>Profile</span>
             </a>
 
             <hr class="dropdown-divider">
+
 
             {{-- LOGOUT --}}
             <a href="#"

@@ -60,6 +60,7 @@
                     <th class="px-4 py-3 text-left">Foto</th>
                     <th class="px-4 py-3 text-left">Nama</th>
                     <th class="px-4 py-3 text-left">Email</th>
+                    <th class="px-4 py-3 text-left">Password</th>
                     <th class="px-4 py-3 text-center w-24">Aksi</th>
                 </tr>
             </thead>
@@ -189,11 +190,21 @@ function renderTable(){
         tabelAdmin.innerHTML+=`
         <tr class="border-b hover:bg-gray-50 transition">
             <td class="px-4 py-3">${start+i+1}</td>
+
             <td class="px-4 py-3">
                 <img src="${a.foto}" class="w-9 h-9 rounded-full object-cover">
             </td>
+
             <td class="px-4 py-3 font-medium">${a.nama}</td>
+
             <td class="px-4 py-3 text-gray-600">${a.email}</td>
+
+            <!-- PASSWORD -->
+            <td class="px-4 py-3 font-mono tracking-widest text-gray-500">
+                ${'•'.repeat(a.password.length)}
+            </td>
+
+            <!-- AKSI -->
             <td class="px-4 py-3 text-center relative">
                 <button onclick="toggleAksi(event,${a.id})"
                         class="text-xl px-2">⋮</button>
@@ -208,7 +219,7 @@ function renderTable(){
                     <button onclick="hapusData(${a.id})"
                             class="block w-full text-left px-4 py-2
                                    text-red-600 hover:bg-red-50">
-                        🗑 Hapus
+                         Hapus
                     </button>
                 </div>
             </td>
@@ -217,6 +228,7 @@ function renderTable(){
 
     updatePagination();
 }
+
 
 /* ================= DROPDOWN AKSI ================= */
 function toggleAksi(e,id){

@@ -7,9 +7,30 @@ use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\IklanController;
 use App\Http\Controllers\EJurnalController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ProfileController;
 
 
 use App\Http\Controllers\AuthController;
+
+Route::get('/set-dummy-user', function () {
+    session([
+        'user' => [
+            'name'     => 'Super Admin',
+            'email'    => 'admin@portal.test',
+            'role'     => 'Administrator',
+            'password' => '********',
+            'photo'    => 'https://ui-avatars.com/api/?name=Super+Admin&background=0D8ABC&color=fff'
+        ]
+    ]);
+
+    return redirect('pages.profile');
+});
+
+Route::get('/profile', [ProfileController::class, 'index'])
+    ->name('profile');
+
+Route::post('/profile/update-password', [ProfileController::class, 'updatePassword'])
+    ->name('profile.update.password');
 
 Route::get('/login', function () {
     return view('component.Login');
