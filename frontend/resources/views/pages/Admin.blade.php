@@ -203,7 +203,7 @@ function renderTable(){
                             border rounded-lg shadow-md w-32 z-20">
                     <button onclick="openEdit(${a.id})"
                             class="block w-full text-left px-4 py-2 hover:bg-blue-50">
-                        ✏️ Edit
+                         Edit
                     </button>
                     <button onclick="hapusData(${a.id})"
                             class="block w-full text-left px-4 py-2
