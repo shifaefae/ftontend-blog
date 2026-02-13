@@ -25,9 +25,14 @@ Route::get('/set-dummy-user', function () {
 
     return redirect('pages.profile');
 });
+Route::prefix('profile')->name('profile.')->group(function () {
 
-Route::get('/profile', [ProfileController::class, 'index'])
-    ->name('profile');
+    Route::get('/', [ProfileController::class, 'index'])
+        ->name('index');
+
+    Route::put('/password', [ProfileController::class, 'updatePassword'])
+        ->name('update.password');
+});
 
 Route::post('/profile/update-password', [ProfileController::class, 'updatePassword'])
     ->name('profile.update.password');
@@ -50,7 +55,13 @@ Route::view('/','pages.Dashboard');
 Route::view('/kategori','pages.Kategori');
 Route::view('/iklan','pages.Iklan');
 Route::view('/ejurnal','pages.Ejurnal');
-Route::view('/admin','pages.Admin');
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminController::class, 'index'])->name('index');
+    Route::post('/', [AdminController::class, 'store'])->name('store');
+    Route::put('/{id}', [AdminController::class, 'update'])->name('update');
+    Route::delete('/{id}', [AdminController::class, 'destroy'])->name('destroy');
+});
+
 
 Route::get('/blog/edit/{id}', [BlogController::class, 'edit'])
      ->name('blog.edit');

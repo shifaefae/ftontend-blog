@@ -25,7 +25,7 @@
         <div class="dropdown-menu" id="dropdownMenu">
 
             {{-- PROFILE --}}
-            <a href="{{ route('profile') }}" class="dropdown-item">
+            <a href="{{ route('profile.index') }}" class="dropdown-item">
                 <i class="fas fa-user"></i>
                 <span>Profile</span>
             </a>
