@@ -5,76 +5,86 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\IklanController;
-use App\Http\Controllers\EJurnalController;
+use App\Http\Controllers\EjurnalController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
-
-
 use App\Http\Controllers\AuthController;
 
-Route::get('/set-dummy-user', function () {
-    session([
-        'user' => [
-            'name'     => 'Super Admin',
-            'email'    => 'admin@portal.test',
-            'role'     => 'Administrator',
-            'password' => '********',
-            'photo'    => 'https://ui-avatars.com/api/?name=Super+Admin&background=0D8ABC&color=fff'
-        ]
-    ]);
-
-    return redirect('pages.profile');
-});
-Route::prefix('profile')->name('profile.')->group(function () {
-
-    Route::get('/', [ProfileController::class, 'index'])
-        ->name('index');
-
-    Route::put('/password', [ProfileController::class, 'updatePassword'])
-        ->name('update.password');
+// =============================================
+//  AUTH (Guest only)
+// =============================================
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'show'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 });
 
-Route::post('/profile/update-password', [ProfileController::class, 'updatePassword'])
-    ->name('profile.update.password');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::get('/login', function () {
-    return view('component.Login');
-})->name('login');
+// =============================================
+//  SEMUA HALAMAN PROTECTED (harus login)
+// =============================================
+Route::middleware('auth.session')->group(function () {
 
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', function () {
-    session()->flush();
-    return redirect('/login');
-})->name('logout');
+    // DASHBOARD
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
+    // BLOG (nama FE) → BE endpoint: /api/beritas
+    Route::prefix('blog')->name('blog.')->group(function () {
+        Route::get('/list',        [BlogController::class, 'index'])->name('list');
+        Route::get('/tambah',      [BlogController::class, 'create'])->name('tambah');
+        Route::post('/',           [BlogController::class, 'store'])->name('store');
+        Route::get('/edit/{id}',   [BlogController::class, 'edit'])->name('edit');
+        Route::put('/update/{id}', [BlogController::class, 'update'])->name('update');
+        Route::delete('/{id}',     [BlogController::class, 'destroy'])->name('destroy');
+    });
 
-Route::view('/','pages.Dashboard');
-// Route::view('/blog/list','pages.Listblog') ->name('blog.list');
-// Route::view('/blog','pages.blog') ->name('blog.store');
-// Route::view('/blog/tambah','pages.Tambahblog');
-Route::view('/kategori','pages.Kategori');
-Route::view('/iklan','pages.Iklan');
-Route::view('/ejurnal','pages.Ejurnal');
-Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', [AdminController::class, 'index'])->name('index');
-    Route::post('/', [AdminController::class, 'store'])->name('store');
-    Route::put('/{id}', [AdminController::class, 'update'])->name('update');
-    Route::delete('/{id}', [AdminController::class, 'destroy'])->name('destroy');
+    // KATEGORI & TAG — sekarang punya full CRUD route ke BE
+    Route::prefix('kategori')->name('kategori.')->group(function () {
+        Route::get('/',                    [KategoriController::class, 'index'])->name('index');
+
+        // Kategori CRUD
+        Route::post('/kategori',           [KategoriController::class, 'storeKategori'])->name('kategori.store');
+        Route::put('/kategori/{id}',       [KategoriController::class, 'updateKategori'])->name('kategori.update');
+        Route::delete('/kategori/{id}',    [KategoriController::class, 'destroyKategori'])->name('kategori.destroy');
+
+        // Tag CRUD
+        Route::post('/tag',                [KategoriController::class, 'storeTag'])->name('tag.store');
+        Route::put('/tag/{id}',            [KategoriController::class, 'updateTag'])->name('tag.update');
+        Route::delete('/tag/{id}',         [KategoriController::class, 'destroyTag'])->name('tag.destroy');
+    });
+
+    // IKLAN
+    Route::prefix('iklan')->name('iklan.')->group(function () {
+        Route::get('/',          [IklanController::class, 'index'])->name('list');
+        Route::post('/',         [IklanController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [IklanController::class, 'edit'])->name('edit');
+        Route::put('/{id}',      [IklanController::class, 'update'])->name('update');
+        Route::delete('/{id}',   [IklanController::class, 'destroy'])->name('destroy');
+    });
+
+    // E-JURNAL — sekarang punya full CRUD
+    Route::prefix('ejurnal')->name('ejurnal.')->group(function () {
+        Route::get('/',                    [EjurnalController::class, 'index'])->name('index');
+        Route::post('/',                   [EjurnalController::class, 'store'])->name('store');
+        Route::put('/{id}',                [EjurnalController::class, 'update'])->name('update');
+        Route::delete('/{id}',             [EjurnalController::class, 'destroy'])->name('destroy');
+        Route::delete('/gambar/{id}',      [EjurnalController::class, 'deleteGambar'])->name('gambar.destroy');
+    });
+
+    // ADMIN (manajemen user)
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('/',        [AdminController::class, 'index'])->name('index');
+        Route::post('/',       [AdminController::class, 'store'])->name('store');
+        Route::put('/{id}',    [AdminController::class, 'update'])->name('update');
+        Route::delete('/{id}', [AdminController::class, 'destroy'])->name('destroy');
+    });
+
+    // PROFILE
+    Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get('/',         [ProfileController::class, 'index'])->name('index');
+        Route::put('/password', [ProfileController::class, 'updatePassword'])->name('update.password');
+    });
+    // Alias lama agar Profile.blade.php tetap jalan
+    Route::put('/profile/update-password', [ProfileController::class, 'updatePassword'])
+        ->name('profile.update.password');
 });
-
-
-Route::get('/blog/edit/{id}', [BlogController::class, 'edit'])
-     ->name('blog.edit');
-
-Route::put('/blog/update/{id}', [BlogController::class, 'update'])
-     ->name('blog.update');
-
-// Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-Route::get('/blog/tambah', [BlogController::class, 'create'])->name('blog.tambah');
-Route::get('/blog/list', [BlogController::class, 'index'])->name('blog.list');
-Route::post('/blog', [BlogController::class, 'store'])->name('blog.store');
-// Route::get('/kategori', [KategoriController::class, 'index'])->name('kategori');
-// Route::get('/iklan', [IklanController::class, 'index'])->name('iklan');
-// Route::get('/ejurnal', [EJurnalController::class, 'index'])->name('ejurnal');
-// Route::get('/admin', [AdminController::class, 'index'])->name('admin');
- 

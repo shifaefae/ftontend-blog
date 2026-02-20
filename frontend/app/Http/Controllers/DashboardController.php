@@ -4,48 +4,51 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
+use Illuminate\Support\Facades\Http;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // 🔒 Cek apakah sudah login
         if (!session()->has('api_token')) {
-            return redirect()->route('login')
-                ->with('error', 'Silakan login terlebih dahulu.');
+            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
         }
 
-        $client = new Client();
-
+        // Ambil data berita dari BE untuk statistik dashboard
+        // BE: GET /api/beritas — PUBLIC, tidak butuh token
+        // Tapi kita kirim token juga agar bisa lihat semua status (draft + published)
         try {
-            $response = $client->get(
-                env('API_URL') . '/api/dashboard',
-                [
-                    'headers' => [
-                        'X-API-KEY'    => env('API_KEY'),
-                        'Authorization'=> 'Bearer ' . session('api_token'),
-                        'Accept'       => 'application/json',
-                    ],
-                    'timeout' => 10,
-                    'http_errors' => false
-                ]
-            );
+            $response = Http::timeout(10)
+                ->withHeaders([
+                    'X-API-KEY'     => env('API_KEY'),
+                    'Authorization' => 'Bearer ' . session('api_token'),
+                    'Accept'        => 'application/json',
+                ])
+                ->get(env('API_BASE_URL') . 'beritas');
 
-            $result = json_decode($response->getBody(), true); 
+            $result  = $response->json();
+            $beritas = $result['data'] ?? [];
 
-            if ($response->getStatusCode() !== 200) {
-                return back()->with('error', $result['message'] ?? 'Gagal mengambil data dashboard.');
-            }
+            // Hitung statistik dari data berita
+            $jumlahBerita    = count($beritas);
+            $beritaPublished = count(array_filter($beritas, fn($b) => ($b['status'] ?? '') === 'published'));
+            $beritaDraft     = count(array_filter($beritas, fn($b) => ($b['status'] ?? '') === 'draft'));
 
-            // Kirim data ke view
-            return view('pages.dashboard', [
-                'data' => $result
-            ]);
+            // Ambil 5 berita terbaru untuk tabel dashboard
+            $beritaTerbaru = array_slice($beritas, 0, 5);
 
-        } catch (RequestException $e) {
-            return back()->with('error', 'Server API tidak dapat diakses.');
+        } catch (\Exception $e) {
+            $jumlahBerita    = 0;
+            $beritaPublished = 0;
+            $beritaDraft     = 0;
+            $beritaTerbaru   = [];
         }
+
+        return view('pages.Dashboard', compact(
+            'jumlahBerita',
+            'beritaPublished',
+            'beritaDraft',
+            'beritaTerbaru'
+        ));
     }
 }

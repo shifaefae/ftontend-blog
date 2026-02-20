@@ -5,57 +5,38 @@
 @section('content')
 <div class="min-h-screen bg-[#fbfbfc] p-5 font-sans max-w-7xl mx-auto">
 
-    <!-- Page Title -->
-    <h1 class="text-[28px] font-bold mb-6
-               bg-gradient-to-r from-gray-800 to-[#4988C4]
+    <h1 class="text-[28px] font-bold mb-6 bg-gradient-to-r from-gray-800 to-[#4988C4]
                bg-clip-text text-transparent">
         Dashboard Portal Blog
     </h1>
 
-    <!-- Stats Cards -->
+    <!-- Stats Cards — data dari DashboardController -->
     <div class="flex flex-wrap gap-5 mb-9">
-        <!-- Card -->
         <div class="flex-1 min-w-[200px] text-center px-9 py-6 rounded-xl
                     bg-gradient-to-r from-[#4988C4] to-[#4988C4]
-                    transition-all duration-300
-                    hover:-translate-y-1 hover:shadow-lg">
-            <div class="text-sm text-white/95 mb-2 font-medium tracking-wide">
-                📰 Jumlah Berita
-            </div>
-            <div class="text-4xl font-bold text-white">
-                {{ $jumlahBerita ?? 131 }}
-            </div>
+                    transition-all hover:-translate-y-1 hover:shadow-lg">
+            <div class="text-sm text-white/95 mb-2 font-medium">📰 Jumlah Berita</div>
+            <div class="text-4xl font-bold text-white">{{ $jumlahBerita }}</div>
         </div>
 
         <div class="flex-1 min-w-[200px] text-center px-9 py-6 rounded-xl
-                    bg-gradient-to-r from-[#4988C4] to-[#4988C4]
-                    transition-all duration-300
-                    hover:-translate-y-1 hover:shadow-lg">
-            <div class="text-sm text-white/95 mb-2 font-medium tracking-wide">
-                ✅ Berita Published
-            </div>
-            <div class="text-4xl font-bold text-white">
-                {{ $beritaPublished ?? 98 }}
-            </div>
+                    bg-gradient-to-r from-green-500 to-green-600
+                    transition-all hover:-translate-y-1 hover:shadow-lg">
+            <div class="text-sm text-white/95 mb-2 font-medium">✅ Berita Published</div>
+            <div class="text-4xl font-bold text-white">{{ $beritaPublished }}</div>
         </div>
 
         <div class="flex-1 min-w-[200px] text-center px-9 py-6 rounded-xl
-                    bg-gradient-to-r from-[#4988C4] to-[#4988C4]
-                    transition-all duration-300
-                    hover:-translate-y-1 hover:shadow-lg">
-            <div class="text-sm text-white/95 mb-2 font-medium tracking-wide">
-                📝 Berita Draft
-            </div>
-            <div class="text-4xl font-bold text-white">
-                {{ $beritaDraft ?? 33 }}
-            </div>
+                    bg-gradient-to-r from-yellow-500 to-yellow-600
+                    transition-all hover:-translate-y-1 hover:shadow-lg">
+            <div class="text-sm text-white/95 mb-2 font-medium">📝 Berita Draft</div>
+            <div class="text-4xl font-bold text-white">{{ $beritaDraft }}</div>
         </div>
     </div>
 
     <!-- Diagram -->
     <div class="relative bg-white rounded-2xl p-8 mb-9
-                shadow-[0_4px_20px_rgba(0,0,0,0.08)]
-                border-t-4 border-[#4988C4]">
+                shadow-[0_4px_20px_rgba(0,0,0,0.08)] border-t-4 border-[#4988C4]">
         <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
             <span class="text-2xl">📊</span> Diagram Data Viewers
         </h2>
@@ -65,233 +46,93 @@
     <!-- Berita Section -->
     <div class="grid grid-cols-1 lg:grid-cols-[73%_25%] gap-6">
 
-        <!-- Berita Terbaru -->
+        <!-- Berita Terbaru — dari API -->
         <div>
             <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
                 <span class="text-2xl">🔥</span> Berita Terbaru
             </h2>
 
             <div class="relative bg-white rounded-2xl overflow-hidden
-                        shadow-[0_4px_20px_rgba(0,0,0,0.08)]
-                        border-t-4 border-[#4988C4]">
+                        shadow-[0_4px_20px_rgba(0,0,0,0.08)] border-t-4 border-[#4988C4]">
                 <table class="w-full border-collapse text-sm">
                     <thead class="bg-gradient-to-r from-gray-100 to-gray-200 border-b-2">
                         <tr class="text-gray-800 font-semibold">
                             <th class="p-4 text-center w-[5%]">No</th>
                             <th class="p-4 text-left w-[12%]">Gambar</th>
-                            <th class="p-4 text-left w-[30%]">Judul</th>
-                            <th class="p-4 text-center w-[8%]">Admin</th>
-                            <th class="p-4 text-left w-[15%]">Nama</th>
+                            <th class="p-4 text-left w-[35%]">Judul</th>
+                            <th class="p-4 text-left w-[15%]">Penulis</th>
                             <th class="p-4 text-center w-[15%]">Status</th>
-                            <th class="p-4 text-center w-[15%]">Waktu</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="border-b transition hover:bg-gradient-to-r hover:from-gray-100 hover:to-gray-200">
-                            <td class="p-4 text-center font-semibold text-gray-600">1</td>
+                        {{-- FIX: Dari API, bukan data statis --}}
+                        @forelse($beritaTerbaru as $i => $berita)
+                        <tr class="border-b transition hover:bg-gray-50">
+                            <td class="p-4 text-center font-semibold text-gray-600">{{ $i + 1 }}</td>
                             <td class="p-4">
-                                <img src="https://via.placeholder.com/80x60"
-                                     class="w-[80px] h-[60px] rounded-lg object-cover shadow">
+                                @if(!empty($berita['thumbnail']))
+                                    <img src="{{ env('MEDIA_BASE_URL') . $berita['thumbnail'] }}"
+                                         class="w-[80px] h-[60px] rounded-lg object-cover shadow"
+                                         onerror="this.src='https://via.placeholder.com/80x60'">
+                                @else
+                                    <div class="w-[80px] h-[60px] rounded-lg bg-gray-200 flex items-center justify-center">
+                                        <i class="fas fa-image text-gray-400"></i>
+                                    </div>
+                                @endif
                             </td>
-                            <td class="p-4 font-medium text-gray-800 leading-relaxed">
-                                Efek Krisis RAM, Toko di Jepang Sampai "Ngebet" Beli PC Lama
+                            <td class="p-4 font-medium text-gray-800">
+                                {{ $berita['title'] ?? '-' }}
+                            </td>
+                            <td class="p-4 text-gray-600">
+                                {{ $berita['user']['name'] ?? '-' }}
                             </td>
                             <td class="p-4 text-center">
-                                <img src="https://via.placeholder.com/40"
-                                     class="w-10 h-10 rounded-full object-cover border-2 border-[#4988C4] mx-auto">
-                            </td>
-                            <td class="p-4 font-medium text-gray-600">Admin Satu</td>
-                            <td class="p-4 text-center">
-                                <span class="px-4 py-1 rounded-full text-xs font-semibold text-white
-                                             bg-gradient-to-r from-[#4988C4] to-[#4988C4]">
-                                    Published
-                                </span>
-                            </td>
-                            <td class="p-4 text-center text-gray-500 text-xs font-medium">
-                                2 jam lalu
+                                @if(($berita['status'] ?? '') === 'published')
+                                    <span class="px-3 py-1 rounded-full text-xs font-semibold text-white bg-green-500">Published</span>
+                                @else
+                                    <span class="px-3 py-1 rounded-full text-xs font-semibold text-white bg-yellow-500">Draft</span>
+                                @endif
                             </td>
                         </tr>
-                        <tr class="border-b transition hover:bg-gradient-to-r hover:from-gray-100 hover:to-gray-200">
-                            <td class="p-4 text-center font-semibold text-gray-600">2</td>
-                            <td class="p-4">
-                                <img src="https://via.placeholder.com/80x60"
-                                     class="w-[80px] h-[60px] rounded-lg object-cover shadow">
-                            </td>
-                            <td class="p-4 font-medium text-gray-800 leading-relaxed">
-                                Indonesia Resmi Masuk Era 5G dengan Peluncuran Jaringan Nasional
-                            </td>
-                            <td class="p-4 text-center">
-                                <img src="https://via.placeholder.com/40"
-                                     class="w-10 h-10 rounded-full object-cover border-2 border-[#4988C4] mx-auto">
-                            </td>
-                            <td class="p-4 font-medium text-gray-600">Admin Dua</td>
-                            <td class="p-4 text-center">
-                                <span class="px-4 py-1 rounded-full text-xs font-semibold text-white
-                                             bg-gradient-to-r from-[#4988C4] to-[#4988C4]">
-                                    Published
-                                </span>
-                            </td>
-                            <td class="p-4 text-center text-gray-500 text-xs font-medium">
-                                5 jam lalu
+                        @empty
+                        <tr>
+                            <td colspan="5" class="p-8 text-center text-gray-400">
+                                Belum ada berita.
                             </td>
                         </tr>
-                        <tr class="border-b transition hover:bg-gradient-to-r hover:from-gray-100 hover:to-gray-200">
-                            <td class="p-4 text-center font-semibold text-gray-600">3</td>
-                            <td class="p-4">
-                                <img src="https://via.placeholder.com/80x60"
-                                     class="w-[80px] h-[60px] rounded-lg object-cover shadow">
-                            </td>
-                            <td class="p-4 font-medium text-gray-800 leading-relaxed">
-                                Harga Bitcoin Tembus Rekor Baru di Awal Tahun 2025
-                            </td>
-                            <td class="p-4 text-center">
-                                <img src="https://via.placeholder.com/40"
-                                     class="w-10 h-10 rounded-full object-cover border-2 border-[#4988C4] mx-auto">
-                            </td>
-                            <td class="p-4 font-medium text-gray-600">Admin Satu</td>
-                            <td class="p-4 text-center">
-                                <span class="px-4 py-1 rounded-full text-xs font-semibold text-white
-                                             bg-gradient-to-r from-green-500 to-green-600">
-                                    Published
-                                </span>
-                            </td>
-                            <td class="p-4 text-center text-gray-500 text-xs font-medium">
-                                1 hari lalu
-                            </td>
-                        </tr>
-                        <tr class="border-b transition hover:bg-gradient-to-r hover:from-gray-100 hover:to-gray-200">
-                            <td class="p-4 text-center font-semibold text-gray-600">4</td>
-                            <td class="p-4">
-                                <img src="https://via.placeholder.com/80x60"
-                                     class="w-[80px] h-[60px] rounded-lg object-cover shadow">
-                            </td>
-                            <td class="p-4 font-medium text-gray-800 leading-relaxed">
-                                Startup Fintech Lokal Raih Pendanaan Seri B USD 50 Juta
-                            </td>
-                            <td class="p-4 text-center">
-                                <img src="https://via.placeholder.com/40"
-                                     class="w-10 h-10 rounded-full object-cover border-2 border-[#4988C4] mx-auto">
-                            </td>
-                            <td class="p-4 font-medium text-gray-600">Admin Tiga</td>
-                            <td class="p-4 text-center">
-                                <span class="px-4 py-1 rounded-full text-xs font-semibold text-white
-                                             bg-gradient-to-r from-yellow-500 to-yellow-600">
-                                    Draft
-                                </span>
-                            </td>
-                            <td class="p-4 text-center text-gray-500 text-xs font-medium">
-                                2 hari lalu
-                            </td>
-                        </tr>
-                        <tr class="border-b transition hover:bg-gradient-to-r hover:from-gray-100 hover:to-gray-200">
-                            <td class="p-4 text-center font-semibold text-gray-600">5</td>
-                            <td class="p-4">
-                                <img src="https://via.placeholder.com/80x60"
-                                     class="w-[80px] h-[60px] rounded-lg object-cover shadow">
-                            </td>
-                            <td class="p-4 font-medium text-gray-800 leading-relaxed">
-                                AI Generatif Mulai Digunakan di Berbagai Sektor Industri Indonesia
-                            </td>
-                            <td class="p-4 text-center">
-                                <img src="https://via.placeholder.com/40"
-                                     class="w-10 h-10 rounded-full object-cover border-2 border-[#4988C4] mx-auto">
-                            </td>
-                            <td class="p-4 font-medium text-gray-600">Admin Dua</td>
-                            <td class="p-4 text-center">
-                                <span class="px-4 py-1 rounded-full text-xs font-semibold text-white
-                                             bg-gradient-to-r from-[#4988C4] to-[#4988C4]">
-                                    Published
-                                </span>
-                            </td>
-                            <td class="p-4 text-center text-gray-500 text-xs font-medium">
-                                3 hari lalu
-                            </td>
-                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- Berita Terpopuler -->
+        <!-- Berita Terpopuler — bisa dikembangkan dari view_count -->
         <div>
             <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
                 <span class="text-2xl">⭐</span> Berita Terpopuler
             </h2>
 
-            <div class="bg-white rounded-2xl p-5
-                        shadow-[0_4px_20px_rgba(0,0,0,0.08)]">
-                <div class="mb-4 p-4 rounded-xl
-                            bg-gradient-to-r from-[#4988C4] to-[#4988C4]
-                            border-l-4 border-[#4988C4]
-                            transition-all hover:translate-x-1 hover:shadow-lg">
+            <div class="bg-white rounded-2xl p-5 shadow-[0_4px_20px_rgba(0,0,0,0.08)]">
+                @forelse(array_slice($beritaTerbaru ?? [], 0, 5) as $berita)
+                <div class="mb-4 p-4 rounded-xl bg-gradient-to-r from-[#4988C4] to-[#4988C4]
+                            border-l-4 border-blue-300 transition-all hover:translate-x-1 hover:shadow-lg">
                     <div class="text-white font-semibold text-sm mb-2 leading-relaxed">
-                        Bahlil Siap Perangi Mafia Migas
+                        {{ $berita['title'] ?? '-' }}
                     </div>
                     <div class="flex justify-between items-center gap-2 text-white text-xs flex-wrap">
-                        <span class="px-3 py-1 rounded-full bg-[#4988C4] font-semibold">POLITIK</span>
-                        <span>👁 15.3k</span>
-                        <span>3 hari lalu</span>
+                        @if(!empty($berita['kategoris'][0]['name']))
+                            <span class="px-2 py-1 rounded-full bg-blue-400/50 font-semibold">
+                                {{ strtoupper($berita['kategoris'][0]['name']) }}
+                            </span>
+                        @endif
+                        <span>👁 {{ $berita['view_count'] ?? 0 }}</span>
                     </div>
                 </div>
-
-                <div class="mb-4 p-4 rounded-xl
-                            bg-gradient-to-r from-[#4988C4] to-[#4988C4]
-                            border-l-4 border-[#4988C4]
-                            transition-all hover:translate-x-1 hover:shadow-lg">
-                    <div class="text-white font-semibold text-sm mb-2 leading-relaxed">
-                        Indonesia Raih Medali Emas di Ajang Olahraga Asia
-                    </div>
-                    <div class="flex justify-between items-center gap-2 text-white text-xs flex-wrap">
-                        <span class="px-3 py-1 rounded-full bg-[#4988C4] font-semibold">OLAHRAGA</span>
-                        <span>👁 14.1k</span>
-                        <span>1 hari lalu</span>
-                    </div>
-                </div>
-
-                <div class="mb-4 p-4 rounded-xl
-                            bg-gradient-to-r from-[#4988C4] to-[#4988C4]
-                            border-l-4 border-[#4988C4]
-                            transition-all hover:translate-x-1 hover:shadow-lg">
-                    <div class="text-white font-semibold text-sm mb-2 leading-relaxed">
-                        Breakthrough Teknologi Panel Surya Meningkatkan Efisiensi 40%
-                    </div>
-                    <div class="flex justify-between items-center gap-2 text-white text-xs flex-wrap">
-                        <span class="px-3 py-1 rounded-full bg-[#4988C4] font-semibold">TEKNOLOGI</span>
-                        <span>👁 13.7k</span>
-                        <span>2 hari lalu</span>
-                    </div>
-                </div>
-
-                <div class="mb-4 p-4 rounded-xl
-                            bg-gradient-to-r from-[#4988C4] to-[#4988C4]
-                            border-l-4 border-[#4988C4]
-                            transition-all hover:translate-x-1 hover:shadow-lg">
-                    <div class="text-white font-semibold text-sm mb-2 leading-relaxed">
-                        Rupiah Menguat Terhadap Dolar AS di Awal Februari
-                    </div>
-                    <div class="flex justify-between items-center gap-2 text-white text-xs flex-wrap">
-                        <span class="px-3 py-1 rounded-full bg-[#4988C4] font-semibold">EKONOMI</span>
-                        <span>👁 12.4k</span>
-                        <span>4 hari lalu</span>
-                    </div>
-                </div>
-
-                <div class="p-4 rounded-xl
-                            bg-gradient-to-r from-[#4988C4] to-[#4988C4]
-                            border-l-4 border-[#4988C4]
-                            transition-all hover:translate-x-1 hover:shadow-lg">
-                    <div class="text-white font-semibold text-sm mb-2 leading-relaxed">
-                        Festival Film Indonesia Hadirkan 50 Film Pilihan Terbaik
-                    </div>
-                    <div class="flex justify-between items-center gap-2 text-white text-xs flex-wrap">
-                        <span class="px-3 py-1 rounded-full bg-[#4988C4] font-semibold">HIBURAN</span>
-                        <span>👁 11.9k</span>
-                        <span>5 hari lalu</span>
-                    </div>
-                </div>
+                @empty
+                <p class="text-gray-400 text-sm text-center">Belum ada data.</p>
+                @endforelse
             </div>
         </div>
-
     </div>
 </div>
 
@@ -305,7 +146,7 @@ new Chart(ctx, {
         labels: ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'],
         datasets: [{
             label: 'Viewers',
-            data: [879,3595,2569,1995,3678,500,4278],
+            data: [879, 3595, 2569, 1995, 3678, 500, 4278],
             borderColor: '#4988C4',
             backgroundColor: 'rgba(73,136,196,0.15)',
             borderWidth: 3,
@@ -315,9 +156,7 @@ new Chart(ctx, {
     },
     options: {
         responsive: true,
-        plugins: {
-            legend: { labels: { color: '#2d3748' } }
-        }
+        plugins: { legend: { labels: { color: '#2d3748' } } }
     }
 });
 </script>

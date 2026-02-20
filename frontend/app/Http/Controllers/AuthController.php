@@ -4,14 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
+use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
 {
     public function show()
     {
-        return view('auth.login');
+        if (session()->has('api_token')) {
+            return redirect()->route('dashboard');
+        }
+        return view('component.Login');
     }
 
     public function login(Request $request)
@@ -21,52 +23,58 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        $client = new Client();
-
         try {
-            $response = $client->post(
-                'https://unappliquad-charlize-jazzy.ngrok-free.dev/api/login',
-                [
-                    'headers' => [
-                        'X-API-KEY' => '60qCRhSVZnS7t0MPCuSr0FXjjhOTGUUuoT1EhLAleswdJsEL5egObZNBFri2iJmZ',
-                        'Accept'    => 'application/json',
-                    ],
-                    'json' => [
-                        'email'    => $request->email,
-                        'password' => $request->password,
-                    ],
-                    'timeout' => 10,
-                    'http_errors' => false // 🔥 WAJIB supaya tidak 500
-                ]
-            );
+            // BE: POST /api/login  — butuh X-API-KEY header
+            $response = Http::timeout(10)
+                ->withHeaders([
+                    'X-API-KEY' => env('API_KEY'),
+                    'Accept'    => 'application/json',
+                ])
+                ->post(env('API_BASE_URL') . 'login', [
+                    'email'    => $request->email,
+                    'password' => $request->password,
+                ]);
 
-            $result = json_decode($response->getBody(), true);
+            $result = $response->json();
 
-            // Jika status bukan 200
-            if ($response->getStatusCode() !== 200) {
-                return back()->with('error', $result['message'] ?? 'Login gagal.');
+            // BE return: { success, message, token, user }
+            if ($response->failed() || !($result['success'] ?? false)) {
+                return back()
+                    ->withInput($request->only('email'))
+                    ->with('error', $result['message'] ?? 'Email atau password salah.');
             }
 
-            // Jika API pakai "success"
-            if (isset($result['success']) && !$result['success']) {
-                return back()->with('error', $result['message'] ?? 'Login gagal.');
-            }
-
-            // Simpan session
+            // Simpan ke session
             session([
-                'api_token' => $result['token'] ?? null,
-                'user'      => $result['user'] ?? null,
+                'api_token' => $result['token'],
+                'user'      => $result['user'],   // { id, name, email, role, ... }
+                'is_login'  => true,
             ]);
 
-            return redirect('/');
+            return redirect()->route('dashboard');
 
-        } catch (RequestException $e) {
-            return back()->with('error', 'Server API tidak dapat diakses.');
+        } catch (\Exception $e) {
+            return back()
+                ->withInput($request->only('email'))
+                ->with('error', 'Server API tidak dapat diakses. Coba lagi nanti.');
         }
     }
 
     public function logout()
     {
+        // BE: POST /api/logout — butuh Bearer token
+        try {
+            Http::timeout(10)
+                ->withHeaders([
+                    'X-API-KEY'     => env('API_KEY'),
+                    'Authorization' => 'Bearer ' . session('api_token'),
+                    'Accept'        => 'application/json',
+                ])
+                ->post(env('API_BASE_URL') . 'logout');
+        } catch (\Exception $e) {
+            // Tetap logout meski API gagal
+        }
+
         session()->flush();
         return redirect()->route('login');
     }
