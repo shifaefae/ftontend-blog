@@ -11,7 +11,16 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+
+        // Daftarkan alias middleware frontend
+        $middleware->alias([
+            // Cek session api_token — untuk halaman yang butuh login
+            'auth.session' => \App\Http\Middleware\CheckSessionMiddleware::class,
+
+            // Redirect jika sudah login — untuk halaman login/register
+            'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        ]);
+
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -9,13 +9,17 @@ use App\Http\Controllers\EjurnalController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RegisterController; // ← TAMBAH INI
 
+
+Route::get('/register', [RegisterController::class, 'show'])->name('register');        // ← TAMBAH
+Route::post('/register',[RegisterController::class, 'register'])->name('register.post'); 
 // =============================================
 //  AUTH (Guest only)
 // =============================================
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [AuthController::class, 'show'])->name('login');
-    Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+    Route::get('/login',    [AuthController::class, 'show'])->name('login');
+    Route::post('/login',   [AuthController::class, 'login'])->name('login.post');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -25,10 +29,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // =============================================
 Route::middleware('auth.session')->group(function () {
 
-    // DASHBOARD
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-    // BLOG (nama FE) → BE endpoint: /api/beritas
     Route::prefix('blog')->name('blog.')->group(function () {
         Route::get('/list',        [BlogController::class, 'index'])->name('list');
         Route::get('/tambah',      [BlogController::class, 'create'])->name('tambah');
@@ -38,22 +40,16 @@ Route::middleware('auth.session')->group(function () {
         Route::delete('/{id}',     [BlogController::class, 'destroy'])->name('destroy');
     });
 
-    // KATEGORI & TAG — sekarang punya full CRUD route ke BE
     Route::prefix('kategori')->name('kategori.')->group(function () {
-        Route::get('/',                    [KategoriController::class, 'index'])->name('index');
-
-        // Kategori CRUD
-        Route::post('/kategori',           [KategoriController::class, 'storeKategori'])->name('kategori.store');
-        Route::put('/kategori/{id}',       [KategoriController::class, 'updateKategori'])->name('kategori.update');
-        Route::delete('/kategori/{id}',    [KategoriController::class, 'destroyKategori'])->name('kategori.destroy');
-
-        // Tag CRUD
-        Route::post('/tag',                [KategoriController::class, 'storeTag'])->name('tag.store');
-        Route::put('/tag/{id}',            [KategoriController::class, 'updateTag'])->name('tag.update');
-        Route::delete('/tag/{id}',         [KategoriController::class, 'destroyTag'])->name('tag.destroy');
+        Route::get('/',                 [KategoriController::class, 'index'])->name('index');
+        Route::post('/kategori',        [KategoriController::class, 'storeKategori'])->name('kategori.store');
+        Route::put('/kategori/{id}',    [KategoriController::class, 'updateKategori'])->name('kategori.update');
+        Route::delete('/kategori/{id}', [KategoriController::class, 'destroyKategori'])->name('kategori.destroy');
+        Route::post('/tag',             [KategoriController::class, 'storeTag'])->name('tag.store');
+        Route::put('/tag/{id}',         [KategoriController::class, 'updateTag'])->name('tag.update');
+        Route::delete('/tag/{id}',      [KategoriController::class, 'destroyTag'])->name('tag.destroy');
     });
 
-    // IKLAN
     Route::prefix('iklan')->name('iklan.')->group(function () {
         Route::get('/',          [IklanController::class, 'index'])->name('list');
         Route::post('/',         [IklanController::class, 'store'])->name('store');
@@ -62,16 +58,14 @@ Route::middleware('auth.session')->group(function () {
         Route::delete('/{id}',   [IklanController::class, 'destroy'])->name('destroy');
     });
 
-    // E-JURNAL — sekarang punya full CRUD
     Route::prefix('ejurnal')->name('ejurnal.')->group(function () {
-        Route::get('/',                    [EjurnalController::class, 'index'])->name('index');
-        Route::post('/',                   [EjurnalController::class, 'store'])->name('store');
-        Route::put('/{id}',                [EjurnalController::class, 'update'])->name('update');
-        Route::delete('/{id}',             [EjurnalController::class, 'destroy'])->name('destroy');
-        Route::delete('/gambar/{id}',      [EjurnalController::class, 'deleteGambar'])->name('gambar.destroy');
+        Route::get('/',               [EjurnalController::class, 'index'])->name('index');
+        Route::post('/',              [EjurnalController::class, 'store'])->name('store');
+        Route::put('/{id}',           [EjurnalController::class, 'update'])->name('update');
+        Route::delete('/{id}',        [EjurnalController::class, 'destroy'])->name('destroy');
+        Route::delete('/gambar/{id}', [EjurnalController::class, 'deleteGambar'])->name('gambar.destroy');
     });
 
-    // ADMIN (manajemen user)
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/',        [AdminController::class, 'index'])->name('index');
         Route::post('/',       [AdminController::class, 'store'])->name('store');
@@ -79,12 +73,10 @@ Route::middleware('auth.session')->group(function () {
         Route::delete('/{id}', [AdminController::class, 'destroy'])->name('destroy');
     });
 
-    // PROFILE
     Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/',         [ProfileController::class, 'index'])->name('index');
         Route::put('/password', [ProfileController::class, 'updatePassword'])->name('update.password');
     });
-    // Alias lama agar Profile.blade.php tetap jalan
     Route::put('/profile/update-password', [ProfileController::class, 'updatePassword'])
         ->name('profile.update.password');
 });
