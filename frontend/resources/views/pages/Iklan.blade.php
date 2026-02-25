@@ -42,9 +42,9 @@
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Posisi</label>
                     <select name="position" class="w-full border rounded-xl p-3" required>
                         <option value="">Pilih Posisi</option>
-                        <option value="1:1 Slide">1:1 Slide</option>
-                        <option value="3:1 Kanan">3:1 Kanan</option>
-                        <option value="3:1 Kiri">3:1 Kiri</option>
+                        <option value="slide_1x1">1:1 Slide</option>
+                        <option value="right_3x1">3:1 Kanan</option>
+                        <option value="left_3x1">3:1 Kiri</option>
                     </select>
                 </div>
 
@@ -106,7 +106,17 @@
                             <td class="p-3">{{ $iklan['name'] ?? '-' }}</td>
 
                             {{-- FIX: BE return 'position' bukan 'tipe' --}}
-                            <td class="p-3 text-center">{{ $iklan['position'] ?? '-' }}</td>
+                            <td class="p-3 text-center">
+                                @php
+                                    $positions = [
+                                        'slide_1x1' => '1:1 Slide',
+                                        'right_3x1' => '3:1 Kanan',
+                                        'left_3x1'  => '3:1 Kiri',
+                                    ];
+                                @endphp
+
+                                <p>{{ $positions[$iklan['position']] ?? '-' }}</p>
+                            </td>
 
                             <td class="p-3 text-center">{{ $iklan['priority'] ?? '-' }}</td>
 
@@ -119,16 +129,32 @@
                             </td>
 
                             {{-- FIX: Gabungkan MEDIA_BASE_URL + thumbnail path dari BE --}}
-                            <td class="p-3 text-center">
-                                @if(!empty($iklan['thumbnail']))
-                                    <img src="{{ env('MEDIA_BASE_URL') . $iklan['thumbnail'] }}"
-                                         class="w-14 h-14 mx-auto rounded object-cover"
-                                         onerror="this.src='https://via.placeholder.com/56'">
-                                @else
-                                    <div class="w-14 h-14 mx-auto rounded bg-gray-200 flex items-center justify-center">
-                                        <i class="fas fa-image text-gray-400"></i>
-                                    </div>
-                                @endif
+                            <td class="p-4">
+                              @php
+                                $thumbUrl = null;
+
+                                if (!empty($iklan['thumbnail'])) {
+
+                                    if (str_starts_with($iklan['thumbnail'], 'http')) {
+                                        $thumbUrl = $iklan['thumbnail'];
+
+                                    } else {
+                                        $thumbUrl = rtrim(env('MEDIA'), '/') 
+                                            . '/storage/' 
+                                            . ltrim($iklan['thumbnail'], '/');
+                                    }
+                                }
+                                @endphp
+
+                               @if($thumbUrl)
+                                <img src="{{ $thumbUrl }}"
+                                    class="w-[80px] h-[60px] rounded-lg object-cover shadow"
+                                    loading="lazy">
+                            @else
+                                <div class="w-[80px] h-[60px] rounded-lg bg-gray-200 flex items-center justify-center">
+                                    <i class="fas fa-image text-gray-400"></i>
+                                </div>
+                            @endif
                             </td>
 
                             <td class="p-3 text-center">
@@ -138,7 +164,7 @@
 
                                     <form action="{{ route('iklan.destroy', $iklan['id']) }}"
                                           method="POST"
-                                          onsubmit="return confirm('Yakin ingin menghapus iklan ini?')">
+                                          onsubmit="return .'popuphapus.blade.php'">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="text-red-600 hover:text-red-800 font-medium">

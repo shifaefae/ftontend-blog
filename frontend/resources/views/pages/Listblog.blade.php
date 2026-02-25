@@ -54,12 +54,22 @@
                 <tr class="border-b border-gray-200 hover:bg-gray-50">
                     <td class="px-4 py-4">{{ $loop->iteration }}</td>
 
-                    {{-- BE return: thumbnail (path saja), gabung MEDIA_BASE_URL di FE --}}
+                    {{-- PROXY: request gambar lewat server frontend, bukan langsung dari browser --}}
                     <td class="px-4 py-4">
-                        @if(!empty($blog['thumbnail']))
-                            <img src="{{ env('MEDIA_BASE_URL') . $blog['thumbnail'] }}"
-                                 class="w-14 h-14 rounded-lg object-cover"
-                                 onerror="this.src='https://via.placeholder.com/56'">
+                        @php
+                            $thumbUrl = null;
+                            if (!empty($blog['thumbnail'])) {
+                                $raw = str_starts_with($blog['thumbnail'], 'http')
+                                    ? $blog['thumbnail']
+                                    : env('MEDIA') . '/' . $blog['thumbnail'];
+                                $thumbUrl = '/proxy-image?url=' . urlencode($raw);
+                            }
+                        @endphp
+
+                        @if($thumbUrl)
+                            <img src="{{ $thumbUrl }}"
+                                class="w-14 h-14 rounded-lg object-cover"
+                                loading="lazy">
                         @else
                             <div class="w-14 h-14 rounded-lg bg-gray-100 flex items-center justify-center">
                                 <i class="fas fa-image text-gray-400"></i>
@@ -67,17 +77,14 @@
                         @endif
                     </td>
 
-                    {{-- BE field: title (bukan judul) --}}
                     <td class="px-4 py-4 font-medium text-gray-800">
                         {{ $blog['title'] ?? '-' }}
                     </td>
 
-                    {{-- BE relation: user.name --}}
                     <td class="px-4 py-4 text-gray-600">
                         {{ $blog['user']['name'] ?? '-' }}
                     </td>
 
-                    {{-- BE relation: kategoris[] — each has id, name, slug --}}
                     <td class="px-4 py-4">
                         @if(!empty($blog['kategoris']))
                             @foreach ($blog['kategoris'] as $kategori)
@@ -90,7 +97,6 @@
                         @endif
                     </td>
 
-                    {{-- BE field: status (published / draft) --}}
                     <td class="px-4 py-4">
                         @if(($blog['status'] ?? '') === 'published')
                             <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Published</span>

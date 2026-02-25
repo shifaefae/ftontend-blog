@@ -14,6 +14,7 @@ class IklanController extends Controller
             'X-API-KEY'     => env('API_KEY'),
             'Authorization' => 'Bearer ' . session('api_token'),
             'Accept'        => 'application/json',
+            'ngrok-skip-browser-warning' => 'true',
         ];
     }
 
@@ -49,7 +50,7 @@ class IklanController extends Controller
         $request->validate([
             'name'      => 'required|string|max:255',
             'thumbnail' => 'required|image|max:2048',
-            'position'  => 'required|in:1:1 Slide,3:1 Kanan,3:1 Kiri',
+            'position'  => 'required|in:slide_1x1,right_3x1,left_3x1',
             'link'      => 'nullable|url',
             'priority'  => 'nullable|integer|min:1',
             'status'    => 'required|in:active,inactive',

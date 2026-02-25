@@ -7,6 +7,15 @@ use Illuminate\Support\Facades\Http;
 
 class RegisterController extends Controller
 {
+     private function apiHeaders(): array
+    {
+        return [
+            'X-API-KEY'     => env('API_KEY'),
+            'Authorization' => 'Bearer ' . session('api_token'),
+            'Accept'        => 'application/json',
+        ];
+    }
+    
     public function show()
     {
         if (session()->has('api_token')) {

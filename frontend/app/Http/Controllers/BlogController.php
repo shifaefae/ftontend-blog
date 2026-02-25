@@ -9,28 +9,22 @@ use Illuminate\Support\Facades\Http;
 
 class BlogController extends Controller
 {
-    /**
-     * Header helper — semua request protected butuh ini
-     */
     private function apiHeaders(): array
     {
         return [
-            'X-API-KEY'     => env('API_KEY'),
-            'Authorization' => 'Bearer ' . session('api_token'),
-            'Accept'        => 'application/json',
+            'X-API-KEY'                  => env('API_KEY'),
+            'Authorization'              => 'Bearer ' . session('api_token'),
+            'Accept'                     => 'application/json',
+            'ngrok-skip-browser-warning' => 'true',
         ];
     }
 
-    /**
-     * GET /api/beritas — PUBLIC (tapi kita kirim token agar admin bisa lihat draft juga)
-     * Response: { success, data: [ { id, title, slug, description, thumbnail, status, user, kategoris, tags } ] }
-     */
     public function index()
     {
         try {
             $response = Http::timeout(10)
                 ->withHeaders($this->apiHeaders())
-                ->get(env('API_BASE_URL') . 'beritas');
+                ->get(env('API_BASE_URL') . 'beritas/admin');
 
             $result  = $response->json();
             $beritas = $result['data'] ?? [];
@@ -43,17 +37,12 @@ class BlogController extends Controller
         }
     }
 
-    /**
-     * Halaman form tambah blog
-     * Ambil kategori & tag dari BE untuk dropdown
-     */
     public function create()
     {
         $kategoris = [];
         $tags      = [];
 
         try {
-            // GET /api/kategoris-tags — PUBLIC, ambil kategori + tag sekaligus
             $response = Http::timeout(10)
                 ->withHeaders($this->apiHeaders())
                 ->get(env('API_BASE_URL') . 'kategoris-tags');
@@ -63,17 +52,11 @@ class BlogController extends Controller
                 $kategoris = $data['Kategoris'] ?? [];
                 $tags      = $data['tags']       ?? [];
             }
-        } catch (\Exception $e) {
-            // Biarkan kosong
-        }
+        } catch (\Exception $e) {}
 
         return view('pages.Tambahblog', compact('kategoris', 'tags'));
     }
 
-    /**
-     * POST /api/beritas
-     * BE field: title, description, thumbnail (file), status, kategori_ids[], tag_ids[]
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -85,32 +68,44 @@ class BlogController extends Controller
         try {
             $http = Http::timeout(30)->withHeaders($this->apiHeaders());
 
-            // Siapkan field sesuai BE StoreBeritaRequest
+            // ✅ FIX: kirim kategori_ids dan tag_ids sebagai array yang benar
             $fields = [
-                'title'       => $request->title,
-                'description' => $request->description,
-                'status'      => $request->status,
+                'title'        => $request->title,
+                'description'  => $request->description,
+                'status'       => $request->status,
+                'kategori_ids' => (array) $request->input('kategori_ids', []),
+                'tag_ids'      => (array) $request->input('tag_ids', []),
             ];
 
-            // kategori_ids dan tag_ids dikirim sebagai array
-            if ($request->filled('kategori_ids')) {
-                foreach ((array) $request->kategori_ids as $kid) {
-                    $fields['kategori_ids[]'] = $kid;
-                }
-            }
-            if ($request->filled('tag_ids')) {
-                foreach ((array) $request->tag_ids as $tid) {
-                    $fields['tag_ids[]'] = $tid;
-                }
-            }
-
             if ($request->hasFile('thumbnail')) {
-                $file     = $request->file('thumbnail');
-                $response = $http->attach(
+                $file = $request->file('thumbnail');
+                $http = $http->attach(
                     'thumbnail',
                     file_get_contents($file->getRealPath()),
                     $file->getClientOriginalName()
-                )->post(env('API_BASE_URL') . 'beritas', $fields);
+                );
+
+                // Untuk multipart + array, harus pakai asMultipart
+                $multipart = [];
+                foreach ($fields as $key => $value) {
+                    if (is_array($value)) {
+                        foreach ($value as $item) {
+                            $multipart[] = ['name' => $key . '[]', 'contents' => $item];
+                        }
+                    } else {
+                        $multipart[] = ['name' => $key, 'contents' => $value];
+                    }
+                }
+                $multipart[] = [
+                    'name'     => 'thumbnail',
+                    'contents' => fopen($request->file('thumbnail')->getRealPath(), 'r'),
+                    'filename' => $request->file('thumbnail')->getClientOriginalName(),
+                ];
+
+                $response = Http::timeout(30)
+                    ->withHeaders($this->apiHeaders())
+                    ->asMultipart()
+                    ->post(env('API_BASE_URL') . 'beritas', $multipart);
             } else {
                 $response = $http->post(env('API_BASE_URL') . 'beritas', $fields);
             }
@@ -125,31 +120,22 @@ class BlogController extends Controller
             return back()->with('error', $result['message'] ?? 'Gagal menambahkan blog.')->withInput();
 
         } catch (\Exception $e) {
-            return back()->with('error', 'Server API tidak dapat diakses.')->withInput();
+            return back()->with('error', 'Server API tidak dapat diakses: ' . $e->getMessage())->withInput();
         }
     }
 
-    /**
-     * Halaman form edit blog
-     * GET /api/beritas/{id}
-     * Response: { success, data: { id, title, slug, description, thumbnail, status, user, kategoris, tags } }
-     */
     public function edit($id)
     {
         try {
-            // Ambil data berita
             $response = Http::timeout(10)
                 ->withHeaders($this->apiHeaders())
                 ->get(env('API_BASE_URL') . 'beritas/' . $id);
 
-            if ($response->failed()) {
-                abort(404);
-            }
+            if ($response->failed()) abort(404);
 
             $blog = $response->json()['data'] ?? null;
             if (!$blog) abort(404);
 
-            // Ambil kategori & tag untuk dropdown
             $kategoris = [];
             $tags      = [];
             $katResponse = Http::timeout(10)
@@ -169,11 +155,6 @@ class BlogController extends Controller
         }
     }
 
-    /**
-     * PUT /api/beritas/{id}
-     * BE field: title, description, thumbnail (file, optional), status, kategori_ids[], tag_ids[]
-     * CATATAN: Http facade tidak support PUT + multipart, harus spoofing POST + _method=PUT
-     */
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -183,37 +164,42 @@ class BlogController extends Controller
         ]);
 
         try {
-            $http = Http::timeout(30)->withHeaders($this->apiHeaders());
-
+            // ✅ FIX: kirim kategori_ids dan tag_ids sebagai array yang benar
             $fields = [
-                'title'       => $request->title,
-                'description' => $request->description,
-                'status'      => $request->status,
-                '_method'     => 'PUT',
+                'title'        => $request->title,
+                'description'  => $request->description,
+                'status'       => $request->status,
+                'kategori_ids' => (array) $request->input('kategori_ids', []),
+                'tag_ids'      => (array) $request->input('tag_ids', []),
             ];
 
-            if ($request->filled('kategori_ids')) {
-                foreach ((array) $request->kategori_ids as $kid) {
-                    $fields['kategori_ids[]'] = $kid;
-                }
-            }
-            if ($request->filled('tag_ids')) {
-                foreach ((array) $request->tag_ids as $tid) {
-                    $fields['tag_ids[]'] = $tid;
-                }
-            }
-
             if ($request->hasFile('thumbnail')) {
-                $file     = $request->file('thumbnail');
-                $response = $http->attach(
-                    'thumbnail',
-                    file_get_contents($file->getRealPath()),
-                    $file->getClientOriginalName()
-                )->post(env('API_BASE_URL') . 'beritas/' . $id, $fields);
+                $file = $request->file('thumbnail');
+                $multipart = [];
+                foreach ($fields as $key => $value) {
+                    if (is_array($value)) {
+                        foreach ($value as $item) {
+                            $multipart[] = ['name' => $key . '[]', 'contents' => $item];
+                        }
+                    } else {
+                        $multipart[] = ['name' => $key, 'contents' => $value];
+                    }
+                }
+                $multipart[] = ['name' => '_method', 'contents' => 'PUT'];
+                $multipart[] = [
+                    'name'     => 'thumbnail',
+                    'contents' => fopen($file->getRealPath(), 'r'),
+                    'filename' => $file->getClientOriginalName(),
+                ];
+
+                $response = Http::timeout(30)
+                    ->withHeaders($this->apiHeaders())
+                    ->asMultipart()
+                    ->post(env('API_BASE_URL') . 'beritas/' . $id, $multipart);
             } else {
-                // Tanpa file bisa langsung PUT
-                unset($fields['_method']);
-                $response = $http->put(env('API_BASE_URL') . 'beritas/' . $id, $fields);
+                $response = Http::timeout(30)
+                    ->withHeaders($this->apiHeaders())
+                    ->put(env('API_BASE_URL') . 'beritas/' . $id, $fields);
             }
 
             $result = $response->json();
@@ -230,9 +216,6 @@ class BlogController extends Controller
         }
     }
 
-    /**
-     * DELETE /api/beritas/{id}
-     */
     public function destroy($id)
     {
         try {

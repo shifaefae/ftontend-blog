@@ -10,7 +10,7 @@
         Dashboard Portal Blog
     </h1>
 
-    <!-- Stats Cards — data dari DashboardController -->
+    <!-- Stats Cards -->
     <div class="flex flex-wrap gap-5 mb-9">
         <div class="flex-1 min-w-[200px] text-center px-9 py-6 rounded-xl
                     bg-gradient-to-r from-[#4988C4] to-[#4988C4]
@@ -46,7 +46,7 @@
     <!-- Berita Section -->
     <div class="grid grid-cols-1 lg:grid-cols-[73%_25%] gap-6">
 
-        <!-- Berita Terbaru — dari API -->
+        <!-- Berita Terbaru -->
         <div>
             <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
                 <span class="text-2xl">🔥</span> Berita Terbaru
@@ -65,21 +65,33 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {{-- FIX: Dari API, bukan data statis --}}
                         @forelse($beritaTerbaru as $i => $berita)
                         <tr class="border-b transition hover:bg-gray-50">
                             <td class="p-4 text-center font-semibold text-gray-600">{{ $i + 1 }}</td>
+
+                            {{-- FIX: pakai $berita bukan $blog, dan pakai proxy-image --}}
                             <td class="p-4">
-                                @if(!empty($berita['thumbnail']))
-                                    <img src="{{ env('MEDIA_BASE_URL') . $berita['thumbnail'] }}"
-                                         class="w-[80px] h-[60px] rounded-lg object-cover shadow"
-                                         onerror="this.src='https://via.placeholder.com/80x60'">
+                                @php
+                                    $thumbUrl = null;
+                                    if (!empty($berita['thumbnail'])) {
+                                        $raw = str_starts_with($berita['thumbnail'], 'http')
+                                            ? $berita['thumbnail']
+                                            : env('MEDIA') . '/' . $berita['thumbnail'];
+                                        $thumbUrl = '/proxy-image?url=' . urlencode($raw);
+                                    }
+                                @endphp
+
+                                @if($thumbUrl)
+                                    <img src="{{ $thumbUrl }}"
+                                        class="w-[80px] h-[60px] rounded-lg object-cover shadow"
+                                        loading="lazy">
                                 @else
                                     <div class="w-[80px] h-[60px] rounded-lg bg-gray-200 flex items-center justify-center">
                                         <i class="fas fa-image text-gray-400"></i>
                                     </div>
                                 @endif
                             </td>
+
                             <td class="p-4 font-medium text-gray-800">
                                 {{ $berita['title'] ?? '-' }}
                             </td>
@@ -106,7 +118,7 @@
             </div>
         </div>
 
-        <!-- Berita Terpopuler — bisa dikembangkan dari view_count -->
+        <!-- Berita Terpopuler -->
         <div>
             <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
                 <span class="text-2xl">⭐</span> Berita Terpopuler
