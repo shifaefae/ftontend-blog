@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\KategoriController;
@@ -9,11 +10,28 @@ use App\Http\Controllers\EjurnalController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\RegisterController; // ← TAMBAH INI
+use App\Http\Controllers\RegisterController;
 
 
-Route::get('/register', [RegisterController::class, 'show'])->name('register');        // ← TAMBAH
+Route::get('/register', [RegisterController::class, 'show'])->name('register');
 Route::post('/register',[RegisterController::class, 'register'])->name('register.post'); 
+
+// =============================================
+//  PROXY IMAGE (untuk bypass ngrok warning)
+// =============================================
+Route::get('/proxy-image', function() {
+    $url = request('url');
+    $response = \Illuminate\Support\Facades\Http::withHeaders([
+        'ngrok-skip-browser-warning' => 'true',
+        'Accept' => 'image/*',
+        'User-Agent' => 'Mozilla/5.0',
+    ])->get($url);
+    
+    return response($response->body(), 200)
+        ->header('Content-Type', $response->header('Content-Type') ?? 'image/webp')
+        ->header('Cache-Control', 'public, max-age=3600');
+})->name('proxy.image');
+
 // =============================================
 //  AUTH (Guest only)
 // =============================================

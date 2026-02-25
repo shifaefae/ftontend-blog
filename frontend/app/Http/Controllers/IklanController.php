@@ -5,28 +5,43 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class IklanController extends Controller
 {
     private function apiHeaders(): array
     {
         return [
-            'X-API-KEY'     => env('API_KEY'),
-            'Authorization' => 'Bearer ' . session('api_token'),
-            'Accept'        => 'application/json',
+            'X-API-KEY'                  => env('API_KEY'),
+            'Authorization'              => 'Bearer ' . session('api_token'),
+            'Accept'                     => 'application/json',
+            'ngrok-skip-browser-warning' => 'true',
         ];
     }
 
     /**
-     * GET /api/iklans — PUBLIC
-     * Response: { success, data: [ { id, name, thumbnail, link, position, priority, status, user } ], media }
+     * GET /iklans — halaman list
      */
     public function index()
     {
         try {
-            $response = Http::timeout(10)
+            $url = env('API_BASE_URL') . 'iklans';
+
+            $response = Http::timeout(15)
                 ->withHeaders($this->apiHeaders())
-                ->get(env('API_BASE_URL') . 'iklans');
+                ->get($url);
+
+            // Log untuk debug — cek di storage/logs/laravel.log
+            Log::info('[Iklan] index', [
+                'url'    => $url,
+                'status' => $response->status(),
+                'body'   => substr($response->body(), 0, 500), // batasi 500 char
+            ]);
+
+            if ($response->failed()) {
+                return view('pages.Iklan', ['iklans' => []])
+                    ->with('error', 'API error HTTP ' . $response->status() . ': ' . $response->body());
+            }
 
             $result = $response->json();
             $iklans = $result['data'] ?? [];
@@ -34,22 +49,21 @@ class IklanController extends Controller
             return view('pages.Iklan', compact('iklans'));
 
         } catch (\Exception $e) {
+            Log::error('[Iklan] index exception: ' . $e->getMessage());
             return view('pages.Iklan', ['iklans' => []])
-                ->with('error', 'Gagal memuat data iklan.');
+                ->with('error', 'Gagal memuat data: ' . $e->getMessage());
         }
     }
 
     /**
-     * POST /api/iklans
-     * BE field: name, thumbnail (WAJIB file), link, position, priority, status
-     * Posisi: Sesuai BE — position bukan tipe
+     * POST /iklans
      */
     public function store(Request $request)
     {
         $request->validate([
             'name'      => 'required|string|max:255',
             'thumbnail' => 'required|image|max:2048',
-            'position'  => 'required|in:1:1 Slide,3:1 Kanan,3:1 Kiri',
+            'position'  => 'required|in:slide_1x1,right_3x1,left_3x1',
             'link'      => 'nullable|url',
             'priority'  => 'nullable|integer|min:1',
             'status'    => 'required|in:active,inactive',
@@ -80,15 +94,15 @@ class IklanController extends Controller
                     ->with('success', $result['message'] ?? 'Iklan berhasil ditambahkan');
             }
 
-            return back()->with('error', $result['message'] ?? 'Gagal menambahkan iklan.');
+            return back()->with('error', $result['message'] ?? 'Gagal menambahkan iklan. HTTP: ' . $response->status());
 
         } catch (\Exception $e) {
-            return back()->with('error', 'Server API tidak dapat diakses.');
+            return back()->with('error', 'Server API tidak dapat diakses: ' . $e->getMessage());
         }
     }
 
     /**
-     * GET /api/iklans/{id}
+     * GET /iklans/{id}/edit
      */
     public function edit($id)
     {
@@ -110,15 +124,14 @@ class IklanController extends Controller
     }
 
     /**
-     * PUT /api/iklans/{id}
-     * BE field: name, thumbnail (optional file), link, position, priority, status
+     * PUT /iklans/{id}
      */
     public function update(Request $request, $id)
     {
         $request->validate([
             'name'      => 'required|string|max:255',
             'thumbnail' => 'nullable|image|max:2048',
-            'position'  => 'required|in:1:1 Slide,3:1 Kanan,3:1 Kiri',
+            'position'  => 'required|in:slide_1x1,right_3x1,left_3x1',
             'link'      => 'nullable|url',
             'priority'  => 'nullable|integer|min:1',
             'status'    => 'required|in:active,inactive',
@@ -134,7 +147,7 @@ class IklanController extends Controller
             ];
 
             if ($request->hasFile('thumbnail')) {
-                $file     = $request->file('thumbnail');
+                $file = $request->file('thumbnail');
                 $response = Http::timeout(30)
                     ->withHeaders($this->apiHeaders())
                     ->attach(
@@ -156,15 +169,15 @@ class IklanController extends Controller
                     ->with('success', $result['message'] ?? 'Iklan berhasil diupdate');
             }
 
-            return back()->with('error', $result['message'] ?? 'Gagal update iklan.');
+            return back()->with('error', $result['message'] ?? 'Gagal update iklan. HTTP: ' . $response->status());
 
         } catch (\Exception $e) {
-            return back()->with('error', 'Server API tidak dapat diakses.');
+            return back()->with('error', 'Server API tidak dapat diakses: ' . $e->getMessage());
         }
     }
 
     /**
-     * DELETE /api/iklans/{id}
+     * DELETE /iklans/{id}
      */
     public function destroy($id)
     {

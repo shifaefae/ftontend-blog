@@ -52,8 +52,18 @@
             <i class="fas fa-list mr-2"></i>Daftar Kategori
         </h2>
 
+        {{-- SEARCH KATEGORI --}}
+        <div class="relative mb-4">
+            <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 pointer-events-none">
+                <i class="fas fa-search text-sm"></i>
+            </span>
+            <input type="text" id="searchKategori" oninput="searchTable('kategori')"
+                   placeholder="Cari kategori..."
+                   class="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#4988C4]/30 focus:border-[#4988C4] transition">
+        </div>
+
         <div class="overflow-x-auto">
-        <table class="w-full text-sm">
+        <table class="w-full text-sm" id="tabelKategori">
             <thead class="bg-[#4988C4]/10 text-[#4988C4]">
                 <tr>
                     <th class="p-4 text-left">Nama</th>
@@ -61,7 +71,7 @@
                     <th class="p-4 text-center">Aksi</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="bodyKategori">
                 @forelse($kategoris as $kat)
                 <tr class="border-b hover:bg-gray-50">
                     <td class="p-4 font-semibold">{{ $kat['name'] }}</td>
@@ -90,6 +100,23 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
+
+        {{-- PAGINATION KATEGORI --}}
+        <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+            <span id="infoKategori" class="text-sm text-gray-500"></span>
+            <div class="flex gap-2">
+                <button id="prevKategori"
+                        onclick="changePage('kategori', -1)"
+                        class="px-4 py-2 text-sm text-gray-500 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition">
+                    Prev
+                </button>
+                <button id="nextKategori"
+                        onclick="changePage('kategori', 1)"
+                        class="px-4 py-2 text-sm font-semibold text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition">
+                    Next
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -120,15 +147,25 @@
             <i class="fas fa-bookmark mr-2"></i>Daftar Tag
         </h2>
 
+        {{-- SEARCH TAG --}}
+        <div class="relative mb-4">
+            <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 pointer-events-none">
+                <i class="fas fa-search text-sm"></i>
+            </span>
+            <input type="text" id="searchTag" oninput="searchTable('tag')"
+                   placeholder="Cari tag..."
+                   class="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#4988C4]/30 focus:border-[#4988C4] transition">
+        </div>
+
         <div class="overflow-x-auto">
-        <table class="w-full text-sm">
+        <table class="w-full text-sm" id="tabelTag">
             <thead class="bg-[#4988C4]/10 text-[#4988C4]">
                 <tr>
                     <th class="p-4 text-left">Nama</th>
                     <th class="p-4 text-center">Aksi</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="bodyTag">
                 @forelse($tags as $tag)
                 <tr class="border-b hover:bg-gray-50">
                     <td class="p-4 font-semibold">{{ $tag['name'] }}</td>
@@ -154,6 +191,23 @@
                 @endforelse
             </tbody>
         </table>
+        </div>
+
+        {{-- PAGINATION TAG --}}
+        <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+            <span id="infoTag" class="text-sm text-gray-500"></span>
+            <div class="flex gap-2">
+                <button id="prevTag"
+                        onclick="changePage('tag', -1)"
+                        class="px-4 py-2 text-sm text-gray-500 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition">
+                    Prev
+                </button>
+                <button id="nextTag"
+                        onclick="changePage('tag', 1)"
+                        class="px-4 py-2 text-sm font-semibold text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition">
+                    Next
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -222,5 +276,76 @@ function closeModalTag() {
     document.getElementById('modalEditTag').classList.add('hidden');
     document.getElementById('modalEditTag').classList.remove('flex');
 }
+
+// ===== PAGINATION =====
+const PER_PAGE = 10;
+const state = {
+    kategori: { page: 1, rows: [] },
+    tag:      { page: 1, rows: [] },
+};
+
+function searchTable(type) {
+    const inputId  = type === 'kategori' ? 'searchKategori' : 'searchTag';
+    const bodyId   = type === 'kategori' ? 'bodyKategori'   : 'bodyTag';
+    const keyword  = document.getElementById(inputId).value.toLowerCase().trim();
+    const tbody    = document.getElementById(bodyId);
+    const allRows  = Array.from(tbody.rows);
+
+    // Filter: tampilkan baris yang cocok, sembunyikan yang tidak
+    const filtered = allRows.filter(row => {
+        const text    = row.innerText.toLowerCase();
+        const matches = keyword === '' || text.includes(keyword);
+        row.style.display = matches ? '' : 'none';
+        return matches;
+    });
+
+    // Rebuild state dengan hanya baris yang cocok, reset ke halaman 1
+    state[type].rows = filtered;
+    state[type].page = 1;
+    renderPagination(type);
+}
+
+function initPagination(type) {
+    const bodyId = type === 'kategori' ? 'bodyKategori' : 'bodyTag';
+    const tbody  = document.getElementById(bodyId);
+    // Gunakan .rows agar dapat semua <tr> langsung milik tbody ini
+    state[type].rows = Array.from(tbody.rows);
+    renderPagination(type);
+}
+
+function renderPagination(type) {
+    const infoId = type === 'kategori' ? 'infoKategori' : 'infoTag';
+    const prevId = type === 'kategori' ? 'prevKategori' : 'prevTag';
+    const nextId = type === 'kategori' ? 'nextKategori' : 'nextTag';
+
+    const rows      = state[type].rows;
+    const total     = rows.length;
+    const totalPage = Math.max(1, Math.ceil(total / PER_PAGE));
+    const page      = state[type].page;
+    const start     = (page - 1) * PER_PAGE;
+    const end       = start + PER_PAGE;
+
+    rows.forEach((row, i) => {
+        row.style.display = (i >= start && i < end) ? '' : 'none';
+    });
+
+    document.getElementById(infoId).textContent =
+        total > 0 ? `Hal ${page} / ${totalPage}` : '';
+
+    document.getElementById(prevId).disabled = page <= 1;
+    document.getElementById(nextId).disabled = page >= totalPage;
+}
+
+function changePage(type, dir) {
+    const rows      = state[type].rows;
+    const totalPage = Math.max(1, Math.ceil(rows.length / PER_PAGE));
+    state[type].page = Math.min(Math.max(1, state[type].page + dir), totalPage);
+    renderPagination(type);
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    initPagination('kategori');
+    initPagination('tag');
+});
 </script>
 @endsection
