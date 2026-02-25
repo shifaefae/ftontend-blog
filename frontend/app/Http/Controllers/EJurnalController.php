@@ -7,152 +7,137 @@ use Illuminate\Support\Facades\Http;
 
 class EjurnalController extends Controller
 {
-    private function apiHeaders(): array
+    protected $apiUrl;
+
+    public function __construct()
     {
-        return [
-            'X-API-KEY'     => env('API_KEY'),
-            'Authorization' => 'Bearer ' . session('api_token'),
-            'Accept'        => 'application/json',
-        ];
+        $this->apiUrl = env('API_BASE_URL') . 'ejurnals';
     }
 
     /**
-     * GET /api/ejurnals
+     * ==========================
+     * TAMPILKAN DATA
+     * ==========================
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $response = Http::timeout(10)
-                ->withHeaders($this->apiHeaders())
-                ->get(env('API_BASE_URL') . 'ejurnals');
+            $response = Http::timeout(10)->get($this->apiUrl);
 
-            $result   = $response->json();
-            $ejurnals = $result['data'] ?? [];
+            if ($response->failed()) {
+                throw new \Exception('Gagal mengambil data dari API');
+            }
+
+            $ejurnals = $response->json()['data'] ?? $response->json();
+
+            // SEARCH
+            if ($request->search) {
+                $search = strtolower($request->search);
+
+                $ejurnals = collect($ejurnals)->filter(function ($item) use ($search) {
+                    return str_contains(strtolower($item['title'] ?? ''), $search) ||
+                           str_contains(strtolower($item['description'] ?? ''), $search);
+                })->values()->toArray();
+            }
 
             return view('pages.Ejurnal', compact('ejurnals'));
 
         } catch (\Exception $e) {
-            return view('pages.Ejurnal', ['ejurnals' => []])
-                ->with('error', 'Gagal memuat data e-jurnal.');
+            return view('pages.Ejurnal', [
+                'ejurnals' => []
+            ])->with('error', $e->getMessage());
         }
     }
 
     /**
-     * POST /api/ejurnals
+     * ==========================
+     * STORE DATA
+     * ==========================
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'title'       => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'thumbnail'   => 'nullable|image|max:2048',
-            'status'      => 'required|in:draft,published',
-        ]);
-
         try {
-            $http = Http::timeout(30)->withHeaders($this->apiHeaders());
 
-            $fields = [
-                'title'       => $request->title,
-                'description' => $request->description ?? '',
-                'status'      => $request->status,
+            $data = [
+                'title' => $request->title,
+                'description' => $request->description,
+                'status' => $request->status,
             ];
 
             if ($request->hasFile('thumbnail')) {
-                $file = $request->file('thumbnail');
-
-                $response = $http->attach(
-                    'thumbnail',
-                    file_get_contents($file->getRealPath()),
-                    $file->getClientOriginalName()
-                )->post(env('API_BASE_URL') . 'ejurnals', $fields);
-            } else {
-                $response = $http->post(env('API_BASE_URL') . 'ejurnals', $fields);
+                $data['thumbnail'] = fopen($request->file('thumbnail')->getPathname(), 'r');
             }
 
-            $result = $response->json();
+            $response = Http::attach(
+                'thumbnail',
+                $request->file('thumbnail'),
+                $request->file('thumbnail')?->getClientOriginalName()
+            )->post($this->apiUrl, $data);
 
-            if ($response->successful() && ($result['success'] ?? false)) {
-                return redirect()->route('ejurnal.index')
-                    ->with('success', 'E-Jurnal berhasil ditambahkan!');
+            if ($response->failed()) {
+                throw new \Exception('Gagal menyimpan data');
             }
 
-            return back()->with('error', $result['message'] ?? 'Gagal menambahkan.');
+            return redirect()->route('ejurnal.index')
+                ->with('success', 'Jurnal berhasil ditambahkan');
 
         } catch (\Exception $e) {
-            return back()->with('error', 'Server API tidak dapat diakses.');
+            return redirect()->route('ejurnal.index')
+                ->with('error', $e->getMessage());
         }
     }
 
     /**
-     * PUT /api/ejurnals/{id}
+     * ==========================
+     * UPDATE DATA
+     * ==========================
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'title'       => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'status'      => 'required|in:draft,published',
-        ]);
-
         try {
-            $fields = [
-                'title'       => $request->title,
-                'description' => $request->description ?? '',
-                'status'      => $request->status,
-                '_method'     => 'PUT',
+
+            $data = [
+                'title' => $request->title,
+                'description' => $request->description,
+                'status' => $request->status,
             ];
 
-            $http = Http::timeout(30)->withHeaders($this->apiHeaders());
+            $response = Http::put($this->apiUrl . '/' . $id, $data);
 
-            if ($request->hasFile('thumbnail')) {
-                $file = $request->file('thumbnail');
-
-                $response = $http->attach(
-                    'thumbnail',
-                    file_get_contents($file->getRealPath()),
-                    $file->getClientOriginalName()
-                )->post(env('API_BASE_URL') . 'ejurnals/' . $id, $fields);
-            } else {
-                unset($fields['_method']);
-                $response = $http->put(env('API_BASE_URL') . 'ejurnals/' . $id, $fields);
+            if ($response->failed()) {
+                throw new \Exception('Gagal update data');
             }
 
-            $result = $response->json();
-
-            if ($response->successful() && ($result['success'] ?? false)) {
-                return redirect()->route('ejurnal.index')
-                    ->with('success', 'E-Jurnal berhasil diupdate!');
-            }
-
-            return back()->with('error', $result['message'] ?? 'Gagal mengupdate.');
+            return redirect()->route('ejurnal.index')
+                ->with('success', 'Jurnal berhasil diupdate');
 
         } catch (\Exception $e) {
-            return back()->with('error', 'Server API tidak dapat diakses.');
+            return redirect()->route('ejurnal.index')
+                ->with('error', $e->getMessage());
         }
     }
 
     /**
-     * DELETE /api/ejurnals/{id}
+     * ==========================
+     * DELETE DATA
+     * ==========================
      */
     public function destroy($id)
     {
         try {
-            $response = Http::timeout(10)
-                ->withHeaders($this->apiHeaders())
-                ->delete(env('API_BASE_URL') . 'ejurnals/' . $id);
 
-            $result = $response->json();
+            $response = Http::delete($this->apiUrl . '/' . $id);
 
-            if ($response->successful() && ($result['success'] ?? false)) {
-                return redirect()->route('ejurnal.index')
-                    ->with('success', 'E-Jurnal berhasil dihapus!');
+            if ($response->failed()) {
+                throw new \Exception('Gagal menghapus data');
             }
 
-            return back()->with('error', $result['message'] ?? 'Gagal menghapus.');
+            return redirect()->route('ejurnal.index')
+                ->with('success', 'Jurnal berhasil dihapus');
 
         } catch (\Exception $e) {
-            return back()->with('error', 'Server API tidak dapat diakses.');
+            return redirect()->route('ejurnal.index')
+                ->with('error', $e->getMessage());
         }
     }
 }
