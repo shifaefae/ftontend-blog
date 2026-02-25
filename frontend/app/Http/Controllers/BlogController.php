@@ -19,7 +19,10 @@ class BlogController extends Controller
         ];
     }
 
-    public function index()
+    /**
+     * List semua blog (published + draft) - menggunakan endpoint admin
+     */
+    public function index(Request $request)
     {
         try {
             $response = Http::timeout(10)
@@ -29,11 +32,21 @@ class BlogController extends Controller
             $result  = $response->json();
             $beritas = $result['data'] ?? [];
 
+            // Filter lokal jika ada parameter search
+            if ($request->filled('search')) {
+                $keyword = strtolower($request->search);
+                $beritas = array_filter($beritas, function ($b) use ($keyword) {
+                    return str_contains(strtolower($b['title'] ?? ''), $keyword)
+                        || str_contains(strtolower($b['description'] ?? ''), $keyword);
+                });
+                $beritas = array_values($beritas);
+            }
+
             return view('pages.Listblog', ['blogs' => $beritas]);
 
         } catch (\Exception $e) {
             return view('pages.Listblog', ['blogs' => []])
-                ->with('error', 'Gagal memuat data blog.');
+                ->with('error', 'Gagal memuat data blog: ' . $e->getMessage());
         }
     }
 
@@ -66,9 +79,6 @@ class BlogController extends Controller
         ]);
 
         try {
-            $http = Http::timeout(30)->withHeaders($this->apiHeaders());
-
-            // ✅ FIX: kirim kategori_ids dan tag_ids sebagai array yang benar
             $fields = [
                 'title'        => $request->title,
                 'description'  => $request->description,
@@ -78,15 +88,9 @@ class BlogController extends Controller
             ];
 
             if ($request->hasFile('thumbnail')) {
-                $file = $request->file('thumbnail');
-                $http = $http->attach(
-                    'thumbnail',
-                    file_get_contents($file->getRealPath()),
-                    $file->getClientOriginalName()
-                );
-
-                // Untuk multipart + array, harus pakai asMultipart
+                $file      = $request->file('thumbnail');
                 $multipart = [];
+
                 foreach ($fields as $key => $value) {
                     if (is_array($value)) {
                         foreach ($value as $item) {
@@ -98,8 +102,8 @@ class BlogController extends Controller
                 }
                 $multipart[] = [
                     'name'     => 'thumbnail',
-                    'contents' => fopen($request->file('thumbnail')->getRealPath(), 'r'),
-                    'filename' => $request->file('thumbnail')->getClientOriginalName(),
+                    'contents' => fopen($file->getRealPath(), 'r'),
+                    'filename' => $file->getClientOriginalName(),
                 ];
 
                 $response = Http::timeout(30)
@@ -107,7 +111,9 @@ class BlogController extends Controller
                     ->asMultipart()
                     ->post(env('API_BASE_URL') . 'beritas', $multipart);
             } else {
-                $response = $http->post(env('API_BASE_URL') . 'beritas', $fields);
+                $response = Http::timeout(30)
+                    ->withHeaders($this->apiHeaders())
+                    ->post(env('API_BASE_URL') . 'beritas', $fields);
             }
 
             $result = $response->json();
@@ -117,27 +123,52 @@ class BlogController extends Controller
                     ->with('success', $result['message'] ?? 'Blog berhasil ditambahkan!');
             }
 
-            return back()->with('error', $result['message'] ?? 'Gagal menambahkan blog.')->withInput();
+            return back()
+                ->with('error', $result['message'] ?? 'Gagal menambahkan blog.')
+                ->withInput();
 
         } catch (\Exception $e) {
-            return back()->with('error', 'Server API tidak dapat diakses: ' . $e->getMessage())->withInput();
+            return back()
+                ->with('error', 'Server API tidak dapat diakses: ' . $e->getMessage())
+                ->withInput();
         }
     }
 
+    /**
+     * Edit blog — bisa untuk status published maupun draft
+     */
     public function edit($id)
     {
         try {
+            // Ambil detail berita (endpoint show by ID — tidak filter status published)
             $response = Http::timeout(10)
                 ->withHeaders($this->apiHeaders())
                 ->get(env('API_BASE_URL') . 'beritas/' . $id);
 
-            if ($response->failed()) abort(404);
+            // Jika endpoint show hanya mengembalikan published, gunakan admin endpoint
+            // Fallback: coba dari list admin jika show gagal
+            if ($response->failed() || empty($response->json()['data'])) {
+                $listResponse = Http::timeout(10)
+                    ->withHeaders($this->apiHeaders())
+                    ->get(env('API_BASE_URL') . 'beritas/admin');
 
-            $blog = $response->json()['data'] ?? null;
-            if (!$blog) abort(404);
+                if ($listResponse->successful()) {
+                    $allBeritas = $listResponse->json()['data'] ?? [];
+                    $blog = collect($allBeritas)->firstWhere('id', (int) $id)
+                         ?? collect($allBeritas)->firstWhere('id', (string) $id);
+
+                    if (!$blog) abort(404);
+                } else {
+                    abort(404);
+                }
+            } else {
+                $blog = $response->json()['data'] ?? null;
+                if (!$blog) abort(404);
+            }
 
             $kategoris = [];
             $tags      = [];
+
             $katResponse = Http::timeout(10)
                 ->withHeaders($this->apiHeaders())
                 ->get(env('API_BASE_URL') . 'kategoris-tags');
@@ -151,7 +182,7 @@ class BlogController extends Controller
             return view('pages.Editblog', compact('blog', 'kategoris', 'tags'));
 
         } catch (\Exception $e) {
-            abort(500);
+            abort(500, 'Gagal memuat data: ' . $e->getMessage());
         }
     }
 
@@ -164,7 +195,6 @@ class BlogController extends Controller
         ]);
 
         try {
-            // ✅ FIX: kirim kategori_ids dan tag_ids sebagai array yang benar
             $fields = [
                 'title'        => $request->title,
                 'description'  => $request->description,
@@ -174,8 +204,9 @@ class BlogController extends Controller
             ];
 
             if ($request->hasFile('thumbnail')) {
-                $file = $request->file('thumbnail');
+                $file      = $request->file('thumbnail');
                 $multipart = [];
+
                 foreach ($fields as $key => $value) {
                     if (is_array($value)) {
                         foreach ($value as $item) {
@@ -185,7 +216,7 @@ class BlogController extends Controller
                         $multipart[] = ['name' => $key, 'contents' => $value];
                     }
                 }
-                $multipart[] = ['name' => '_method', 'contents' => 'PUT'];
+                $multipart[] = ['name' => '_method',   'contents' => 'PUT'];
                 $multipart[] = [
                     'name'     => 'thumbnail',
                     'contents' => fopen($file->getRealPath(), 'r'),
@@ -209,13 +240,20 @@ class BlogController extends Controller
                     ->with('success', $result['message'] ?? 'Blog berhasil diupdate!');
             }
 
-            return back()->with('error', $result['message'] ?? 'Gagal mengupdate blog.')->withInput();
+            return back()
+                ->with('error', $result['message'] ?? 'Gagal mengupdate blog.')
+                ->withInput();
 
         } catch (\Exception $e) {
-            return back()->with('error', 'Server API tidak dapat diakses.')->withInput();
+            return back()
+                ->with('error', 'Server API tidak dapat diakses: ' . $e->getMessage())
+                ->withInput();
         }
     }
 
+    /**
+     * Hapus blog — bisa untuk status published maupun draft
+     */
     public function destroy($id)
     {
         try {
@@ -230,10 +268,12 @@ class BlogController extends Controller
                     ->with('success', $result['message'] ?? 'Blog berhasil dihapus!');
             }
 
-            return back()->with('error', $result['message'] ?? 'Gagal menghapus blog.');
+            return redirect()->route('blog.list')
+                ->with('error', $result['message'] ?? 'Gagal menghapus blog.');
 
         } catch (\Exception $e) {
-            return back()->with('error', 'Server API tidak dapat diakses.');
+            return redirect()->route('blog.list')
+                ->with('error', 'Server API tidak dapat diakses: ' . $e->getMessage());
         }
     }
 }

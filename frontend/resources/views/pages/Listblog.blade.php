@@ -54,7 +54,7 @@
                 <tr class="border-b border-gray-200 hover:bg-gray-50">
                     <td class="px-4 py-4">{{ $loop->iteration }}</td>
 
-                    {{-- PROXY: request gambar lewat server frontend, bukan langsung dari browser --}}
+                    {{-- PROXY: request gambar lewat server frontend --}}
                     <td class="px-4 py-4">
                         @php
                             $thumbUrl = null;
@@ -106,18 +106,32 @@
                     </td>
 
                     <td class="px-4 py-4">
-                        <div class="flex gap-x-3">
+                        <div class="flex gap-x-3 items-center">
+                            {{-- Edit: tersedia untuk semua status (published & draft) --}}
                             <a href="{{ route('blog.edit', ['id' => $blog['id']]) }}"
-                               class="text-blue-600 hover:text-blue-800 font-medium">Edit</a>
+                               class="text-blue-600 hover:text-blue-800 font-medium">
+                                Edit
+                            </a>
 
-                            <form action="{{ route('blog.destroy', $blog['id']) }}"
-                                  method="POST"
-                                  onsubmit="return confirm('Yakin ingin menghapus blog ini?')">
+                            {{-- Hapus: gunakan popup konfirmasi --}}
+                            <button
+                                type="button"
+                                class="text-red-600 hover:text-red-800 font-medium"
+                                onclick="confirmHapusBlog(
+                                    '{{ $blog['id'] }}',
+                                    '{{ addslashes($blog['title'] ?? 'blog ini') }}'
+                                )">
+                                Hapus
+                            </button>
+
+                            {{-- Hidden form untuk submit DELETE --}}
+                            <form
+                                id="form-hapus-{{ $blog['id'] }}"
+                                action="{{ route('blog.destroy', $blog['id']) }}"
+                                method="POST"
+                                class="hidden">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:text-red-800 font-medium">
-                                    Hapus
-                                </button>
                             </form>
                         </div>
                     </td>
@@ -133,4 +147,23 @@
         </table>
     </div>
 </div>
+
+{{-- Include popup hapus global --}}
+@include('component.popuphapus')
+
+<script>
+/**
+ * Trigger popup hapus untuk blog tertentu
+ * @param {string|number} id    - ID blog
+ * @param {string}        judul - Judul blog untuk ditampilkan di pesan
+ */
+function confirmHapusBlog(id, judul) {
+    openPopupHapus(
+        function () {
+            document.getElementById('form-hapus-' + id).submit();
+        },
+        'Apakah Anda yakin ingin menghapus blog "' + judul + '"? Tindakan ini tidak dapat dibatalkan.'
+    );
+}
+</script>
 @endsection
