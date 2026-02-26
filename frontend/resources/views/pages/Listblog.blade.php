@@ -49,7 +49,7 @@
                     <th class="px-4 py-4 text-white text-left">Aksi</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="bodyBlog">
                 @forelse ($blogs as $blog)
                 <tr class="border-b border-gray-200 hover:bg-gray-50">
                     <td class="px-4 py-4">{{ $loop->iteration }}</td>
@@ -181,5 +181,41 @@ function confirmHapusBlog(id, judul) {
         'Apakah Anda yakin ingin menghapus blog "' + judul + '"? Tindakan ini tidak dapat dibatalkan.'
     );
 }
+
+// ===== PAGINATION =====
+const PER_PAGE = 10;
+let currentPage = 1;
+let allRows = [];
+
+function initPagination() {
+    const tbody = document.getElementById('bodyBlog');
+    allRows = Array.from(tbody.rows);
+    renderPagination();
+}
+
+function renderPagination() {
+    const total     = allRows.length;
+    const totalPage = Math.max(1, Math.ceil(total / PER_PAGE));
+    const start     = (currentPage - 1) * PER_PAGE;
+    const end       = start + PER_PAGE;
+
+    allRows.forEach((row, i) => {
+        row.style.display = (i >= start && i < end) ? '' : 'none';
+    });
+
+    document.getElementById('infoIklan').textContent =
+        total > 0 ? `Hal ${currentPage} / ${totalPage}` : '';
+
+    document.getElementById('prevIklan').disabled = currentPage <= 1;
+    document.getElementById('nextIklan').disabled = currentPage >= totalPage;
+}
+
+function changePage(dir) {
+    const totalPage = Math.max(1, Math.ceil(allRows.length / PER_PAGE));
+    currentPage = Math.min(Math.max(1, currentPage + dir), totalPage);
+    renderPagination();
+}
+
+document.addEventListener('DOMContentLoaded', initPagination);
 </script>
 @endsection
