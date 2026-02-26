@@ -93,8 +93,12 @@ Route::middleware('auth.session')->group(function () {
 
     Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/',         [ProfileController::class, 'index'])->name('index');
+        Route::put('/info',     [ProfileController::class, 'updateInfo'])->name('update.info');         // ← BARU: update nama & email
+        Route::post('/photo',   [ProfileController::class, 'updatePhoto'])->name('update.photo');      // ← BARU: upload foto
         Route::put('/password', [ProfileController::class, 'updatePassword'])->name('update.password');
     });
+
+    // Alias lama agar tidak breaking change
     Route::put('/profile/update-password', [ProfileController::class, 'updatePassword'])
         ->name('profile.update.password');
 });

@@ -8,15 +8,44 @@
     </div>
 
     {{-- USER DROPDOWN --}}
+    @php
+        $navUser     = session('user');                      // array user dari BE
+        $navName     = $navUser['name']     ?? 'Super Admin';
+        $navRole     = $navUser['role']     ?? 'user';
+        $navThumb    = $navUser['thumbnail'] ?? null;
+
+        $roleLabel = match($navRole) {
+            'super_admin' => ['label' => 'Super Admin', 'class' => 'bg-red-100 text-red-600'],
+            'admin'       => ['label' => 'Admin',       'class' => 'bg-blue-100 text-blue-600'],
+            default       => ['label' => 'User',        'class' => 'bg-gray-100 text-gray-600'],
+        };
+
+        // Proxy URL agar gambar ngrok bisa tampil via localhost
+        $navFotoUrl = $navThumb
+            ? route('proxy.image', ['url' => $navThumb])
+            : null;
+    @endphp
+
     <div class="user-dropdown" onclick="toggleDropdown()">
 
-        <div class="user-avatar">
-            {{ substr(session('user.name', 'SA'), 0, 2) }}
+        {{-- Avatar: foto jika ada, inisial jika tidak --}}
+        <div class="user-avatar overflow-hidden">
+            @if ($navFotoUrl)
+                <img src="{{ $navFotoUrl }}"
+                     alt="{{ $navName }}"
+                     class="w-full h-full object-cover rounded-full">
+            @else
+                {{ substr($navName, 0, 2) }}
+            @endif
         </div>
 
-        <span class="user-name">
-            {{ session('user.name', 'Super Admin') }}
-        </span>
+        {{-- Nama + Badge Role --}}
+        <div class="flex flex-col leading-tight">
+            <span class="user-name">{{ $navName }}</span>
+            <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded {{ $roleLabel['class'] }} w-fit">
+                {{ $roleLabel['label'] }}
+            </span>
+        </div>
 
         <span class="dropdown-arrow">
             <i class="fas fa-chevron-down"></i>
@@ -32,7 +61,6 @@
 
             <hr class="dropdown-divider">
 
-
             {{-- LOGOUT --}}
             <a href="#"
                class="dropdown-item text-danger"
@@ -41,7 +69,6 @@
                 <span>Logout</span>
             </a>
 
-            {{-- FORM LOGOUT (WAJIB ADA) --}}
             <form id="logout-form"
                   action="{{ route('logout') }}"
                   method="POST"
@@ -58,7 +85,6 @@
         document.getElementById('dropdownMenu').classList.toggle('show');
     }
 
-    // Tutup dropdown jika klik di luar
     window.addEventListener('click', function (e) {
         if (!e.target.closest('.user-dropdown')) {
             document.getElementById('dropdownMenu').classList.remove('show');

@@ -35,12 +35,6 @@ class AdminController extends Controller
 
             $result = $response->json();
 
-            // ✅ DEBUG — hapus setelah berhasil
-            Log::info('Admin index response', [
-                'status' => $response->status(),
-                'body'   => $result,
-            ]);
-
             if ($response->successful() && ($result['success'] ?? false)) {
                 $paginated   = $result['data'];
                 $users       = $paginated['data']         ?? [];
@@ -48,13 +42,11 @@ class AdminController extends Controller
                 $lastPage    = $paginated['last_page']    ?? 1;
                 $total       = $paginated['total']        ?? 0;
             } else {
-                // Tangkap error message dari BE
                 $debugError = 'Status: ' . $response->status() . ' | Response: ' . json_encode($result);
             }
 
         } catch (\Exception $e) {
             $debugError = 'Exception: ' . $e->getMessage();
-            Log::error('Admin index error', ['error' => $e->getMessage()]);
         }
 
         return view('pages.Admin', compact('users', 'currentPage', 'lastPage', 'total', 'debugError'));
@@ -63,16 +55,20 @@ class AdminController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'                  => 'required|string|max:255',
-            'email'                 => 'required|email',
-            'password'              => 'required|min:8|confirmed',
-            'role'                  => 'required|in:super_admin,admin,user',
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email',
+            'password' => 'required|min:8|confirmed',
+            'role'     => 'required|in:admin,user', // ← super_admin tidak bisa dibuat di sini
+        ], [
+            'role.in' => 'Role hanya boleh: Admin atau User.',
         ]);
 
         try {
+            // Hit POST /api/users (bukan /api/register)
+            // Endpoint ini dilindungi Bearer token + middleware role:super_admin di BE
             $response = Http::timeout(10)
                 ->withHeaders($this->apiHeaders())
-                ->post(env('API_BASE_URL') . 'register', [
+                ->post(env('API_BASE_URL') . 'users', [
                     'name'                  => $request->name,
                     'email'                 => $request->email,
                     'password'              => $request->password,
@@ -89,7 +85,9 @@ class AdminController extends Controller
 
             return back()
                 ->withInput($request->except('password', 'password_confirmation'))
-                ->with('error', $result['message'] ?? 'Gagal menambahkan user.');
+                ->with('error', is_array($result['message'])
+                    ? implode(' ', array_merge(...array_values($result['message'])))
+                    : ($result['message'] ?? 'Gagal menambahkan user.'));
 
         } catch (\Exception $e) {
             return back()->with('error', 'Server API tidak dapat diakses.');
@@ -101,8 +99,10 @@ class AdminController extends Controller
         $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|email',
-            'role'     => 'required|in:super_admin,admin,user',
+            'role'     => 'required|in:admin,user', // ← super_admin tidak bisa diassign
             'password' => 'nullable|min:8|confirmed',
+        ], [
+            'role.in' => 'Role hanya boleh: Admin atau User.',
         ]);
 
         try {

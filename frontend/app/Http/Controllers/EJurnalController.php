@@ -10,16 +10,17 @@ class EjurnalController extends Controller
     private function apiHeaders(): array
     {
         return [
-            'X-API-KEY'     => env('API_KEY'),
-            'Authorization' => 'Bearer ' . session('api_token'),
-            'Accept'        => 'application/json',
+            'X-API-KEY'                  => env('API_KEY'),
+            'Authorization'              => 'Bearer ' . session('api_token'),
+            'Accept'                     => 'application/json',
+            'ngrok-skip-browser-warning' => 'true',
         ];
     }
 
     /**
-     * GET /api/ejurnals
+     * GET /ejurnal — tampil semua + support search lokal
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
             $response = Http::timeout(10)
@@ -28,6 +29,15 @@ class EjurnalController extends Controller
 
             $result   = $response->json();
             $ejurnals = $result['data'] ?? [];
+
+            // Filter lokal jika ada parameter search
+            if ($request->filled('search')) {
+                $keyword  = strtolower($request->search);
+                $ejurnals = array_values(array_filter($ejurnals, function ($item) use ($keyword) {
+                    return str_contains(strtolower($item['title']       ?? ''), $keyword)
+                        || str_contains(strtolower($item['description'] ?? ''), $keyword);
+                }));
+            }
 
             return view('pages.Ejurnal', compact('ejurnals'));
 
@@ -60,7 +70,6 @@ class EjurnalController extends Controller
 
             if ($request->hasFile('thumbnail')) {
                 $file = $request->file('thumbnail');
-
                 $response = $http->attach(
                     'thumbnail',
                     file_get_contents($file->getRealPath()),
@@ -107,7 +116,6 @@ class EjurnalController extends Controller
 
             if ($request->hasFile('thumbnail')) {
                 $file = $request->file('thumbnail');
-
                 $response = $http->attach(
                     'thumbnail',
                     file_get_contents($file->getRealPath()),

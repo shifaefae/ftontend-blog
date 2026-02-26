@@ -24,7 +24,6 @@ class AuthController extends Controller
         ]);
 
         try {
-            // BE: POST /api/login  — butuh X-API-KEY header
             $response = Http::timeout(10)
                 ->withHeaders([
                     'X-API-KEY' => env('API_KEY'),
@@ -37,17 +36,17 @@ class AuthController extends Controller
 
             $result = $response->json();
 
-            // BE return: { success, message, token, user }
             if ($response->failed() || !($result['success'] ?? false)) {
                 return back()
                     ->withInput($request->only('email'))
                     ->with('error', $result['message'] ?? 'Email atau password salah.');
             }
 
-            // Simpan ke session
+            // Simpan ke session — tambah 'role' dari data user
             session([
                 'api_token' => $result['token'],
-                'user'      => $result['user'],   // { id, name, email, role, ... }
+                'user'      => $result['user'],
+                'role'      => $result['user']['role'] ?? 'user', // ← tambahan ini
                 'is_login'  => true,
             ]);
 
@@ -62,7 +61,6 @@ class AuthController extends Controller
 
     public function logout()
     {
-        // BE: POST /api/logout — butuh Bearer token
         try {
             Http::timeout(10)
                 ->withHeaders([
@@ -71,9 +69,7 @@ class AuthController extends Controller
                     'Accept'        => 'application/json',
                 ])
                 ->post(env('API_BASE_URL') . 'logout');
-        } catch (\Exception $e) {
-            // Tetap logout meski API gagal
-        }
+        } catch (\Exception $e) {}
 
         session()->flush();
         return redirect()->route('login');

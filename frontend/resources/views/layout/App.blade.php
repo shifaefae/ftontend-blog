@@ -2,7 +2,14 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>@yield('title', 'Dashboard')</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@yield('title', 'Dashboard') - Portal Berita</title>
+        @php
+        $mediaBase = rtrim(env('MEDIA'), '/');
+        $faviconUrl = route('proxy.image', ['url' => $mediaBase . '/storage/thumbnails/favicon.png']);
+    @endphp
+    <link rel="icon" type="image/png" href="{{ $faviconUrl }}">
+    <link rel="shortcut icon" href="{{ $faviconUrl }}">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">

@@ -3,194 +3,322 @@
 @section('title', 'E-Jurnal - Portal Blog')
 
 @section('content')
-
-<div class="bg-white min-h-screen p-6">
+<div class="min-h-screen bg-[#fbfbfc] p-6">
 <div class="max-w-7xl mx-auto">
 
-    <!-- HEADER -->
-    <div class="mb-8">
-        <h1 class="flex items-center gap-4 text-5xl font-bold drop-shadow-lg">
-            <div class="p-4 rounded-xl border-2 border-[#4988C4] shadow-2xl bg-white">
-                <i class="fas fa-book text-4xl text-[#4988C4]"></i>
+{{-- HEADER --}}
+<div class="mb-8">
+    <h1 class="flex items-center gap-4 text-4xl font-bold text-black">
+        <div class="p-4 rounded-2xl bg-[#4988C4]">
+            <i class="fas fa-book-bookmark text-white text-3xl"></i>
+        </div>
+        Kelola E-Jurnal
+    </h1>
+</div>
+
+@if(session('success'))
+    <div class="mb-4 p-4 bg-green-100 text-green-700 rounded-xl">{{ session('success') }}</div>
+@endif
+@if(session('error'))
+    <div class="mb-4 p-4 bg-red-100 text-red-700 rounded-xl">{{ session('error') }}</div>
+@endif
+
+{{-- GRID --}}
+<div class="grid grid-cols-1 lg:grid-cols-[35%_63%] gap-6">
+
+    {{-- FORM TAMBAH --}}
+    <div class="bg-white rounded-2xl p-6 shadow-xl h-fit">
+        <h2 class="text-2xl font-bold text-[#4988C4] mb-4">
+            <i class="fas fa-plus-circle mr-2"></i>Tambah E-Jurnal
+        </h2>
+
+        <form action="{{ route('ejurnal.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <input name="title" type="text" placeholder="Judul jurnal"
+                   class="w-full mb-3 px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4988C4]/30" required>
+            <textarea name="description" rows="3" placeholder="Deskripsi (opsional)"
+                      class="w-full mb-3 px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4988C4]/30"></textarea>
+            <select name="status" class="w-full mb-3 px-4 py-3 border rounded-xl">
+                <option value="published">Published</option>
+                <option value="draft">Draft</option>
+            </select>
+
+            <div class="mb-4">
+                <input type="file" id="inputGambarTambah" name="thumbnail" accept="image/*"
+                       class="hidden" onchange="previewGambar(event,'previewTambah','namaFileTambah')">
+                <label for="inputGambarTambah"
+                       class="flex items-center justify-center gap-2 px-4 py-3 cursor-pointer
+                              border-2 border-dashed border-[#4988C4] rounded-xl
+                              text-[#4988C4] font-medium hover:bg-[#4988C4]/10 transition">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span id="namaFileTambah">Pilih Gambar (opsional)</span>
+                </label>
+                <img id="previewTambah" class="hidden mt-3 w-full h-36 object-cover rounded-xl border-2 border-[#4988C4]">
             </div>
-            Kelola E-Jurnal
-        </h1>
+
+            <button type="submit"
+                    class="w-full bg-[#4988C4] text-white py-3 rounded-xl font-semibold hover:bg-[#3a6ea0] transition">
+                Simpan E-Jurnal
+            </button>
+        </form>
     </div>
 
-    @if(session('success'))
-        <div class="mb-4 p-4 bg-green-100 text-green-700 rounded-xl">
-            {{ session('success') }}
+    {{-- TABEL --}}
+    <div class="bg-white rounded-2xl p-6 shadow-xl">
+        <h2 class="text-2xl font-bold text-[#4988C4] mb-4">
+            <i class="fas fa-list mr-2"></i>Daftar E-Jurnal
+        </h2>
+
+        <div class="relative mb-4">
+            <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 pointer-events-none">
+                <i class="fas fa-search text-sm"></i>
+            </span>
+            <input type="text" id="searchEjurnal" oninput="searchTable('ejurnal')"
+                   placeholder="Cari jurnal..."
+                   class="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-xl text-sm
+                          focus:outline-none focus:ring-2 focus:ring-[#4988C4]/30 focus:border-[#4988C4] transition">
         </div>
-    @endif
 
-    @if(session('error'))
-        <div class="mb-4 p-4 bg-red-100 text-red-700 rounded-xl">
-            {{ session('error') }}
-        </div>
-    @endif
+        <div class="overflow-x-auto">
+        <table class="w-full text-sm" id="tabelEjurnal">
+            <thead class="bg-[#4988C4]/10 text-[#4988C4]">
+                <tr>
+                    <th class="p-3 text-center w-8">No</th>
+                    <th class="p-3 text-center w-14">Foto</th>
+                    <th class="p-3 text-left">Judul</th>
+                    <th class="p-3 text-left">Deskripsi</th>
+                    <th class="p-3 text-left">User</th>
+                    <th class="p-3 text-center">Status</th>
+                    <th class="p-3 text-center">Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="bodyEjurnal">
+                @forelse($ejurnals as $index => $item)
+                <tr class="border-b hover:bg-gray-50">
 
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <td class="p-3 text-center text-gray-500">{{ $index + 1 }}</td>
 
-        <!-- FORM TAMBAH -->
-        <div class="lg:col-span-4 h-[650px] bg-white border-2 border-[#4988C4] rounded-xl shadow-xl flex flex-col">
+                    {{-- Foto — proxy image --}}
+                    <td class="p-3">
+                        @php
+                            $thumbUrl = null;
+                            if (!empty($item['thumbnail'])) {
+                                $raw = str_starts_with($item['thumbnail'], 'http')
+                                    ? $item['thumbnail']
+                                    : env('MEDIA') . '/storage/' . ltrim($item['thumbnail'], '/');
+                                $thumbUrl = '/proxy-image?url=' . urlencode($raw);
+                            }
+                        @endphp
+                        @if($thumbUrl)
+                            <img src="{{ $thumbUrl }}"
+                                 class="w-12 h-12 rounded-lg object-cover"
+                                 loading="lazy"
+                                 onerror="this.outerHTML='<div class=\'w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center text-red-400 text-xs\'>Err</div>'">
+                        @else
+                            <div class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center">
+                                <i class="fas fa-image text-gray-400 text-xs"></i>
+                            </div>
+                        @endif
+                    </td>
 
-            <div class="p-8 pb-4">
-                <h2 class="text-3xl font-bold text-[#4988C4] border-b-4 border-[#4988C4] pb-4">
-                    <i class="fas fa-plus-circle mr-2"></i>Tambah Jurnal
-                </h2>
-            </div>
+                    {{-- Judul (dipisah) --}}
+                    <td class="p-3 font-semibold text-gray-800">
+                        {{ $item['title'] ?? '-' }}
+                    </td>
 
-            <form action="{{ route('ejurnal.store') }}" method="POST" enctype="multipart/form-data" class="flex-1 flex flex-col">
-                @csrf
+                    {{-- Deskripsi (dipisah) --}}
+                    <td class="p-3 text-gray-500 text-xs max-w-[160px]">
+                        <span class="line-clamp-2">{{ $item['description'] ?? '-' }}</span>
+                    </td>
 
-                <div class="flex-1 overflow-y-auto px-8 space-y-5">
+                    {{-- User --}}
+                    <td class="p-3 text-gray-600 text-xs">
+                        {{ $item['user']['name'] ?? '-' }}
+                    </td>
 
-                    <div>
-                        <label class="font-bold text-sm text-[#4988C4] mb-2 block">Judul</label>
-                        <input name="title" type="text" required
-                            class="w-full px-4 py-3 rounded-xl border-2 border-[#4988C4] focus:ring-4 focus:ring-[#4988C4]/20">
-                    </div>
+                    {{-- Status --}}
+                    <td class="p-3 text-center">
+                        @if(($item['status'] ?? '') === 'published')
+                            <span class="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-semibold">Published</span>
+                        @else
+                            <span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-semibold">Draft</span>
+                        @endif
+                    </td>
 
-                    <div>
-                        <label class="font-bold text-sm text-[#4988C4] mb-2 block">Deskripsi</label>
-                        <textarea name="description" rows="3"
-                            class="w-full px-4 py-3 rounded-xl border-2 border-[#4988C4] focus:ring-4 focus:ring-[#4988C4]/20"></textarea>
-                    </div>
-
-                    <div>
-                        <label class="font-bold text-sm text-[#4988C4] mb-2 block">Status</label>
-                        <select name="status"
-                            class="w-full px-4 py-3 rounded-xl border-2 border-[#4988C4] focus:ring-4 focus:ring-[#4988C4]/20">
-                            <option value="published">Published</option>
-                            <option value="draft">Draft</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="flex items-center gap-2 font-bold text-sm text-[#4988C4] mb-2">
-                            <i class="fas fa-image"></i> Gambar 
-                        </label>
-
-                        <input type="file" name="thumbnail" id="inputGambar" accept="image/*"
-                            class="hidden" onchange="previewGambar(event)">
-
-                        <label for="inputGambar"
-                            id="labelPilihGambar"
-                            class="block cursor-pointer text-center px-4 py-3 rounded-xl border-2 border-[#4988C4]
-                                   text-[#4988C4] font-semibold hover:bg-[#4988C4]/10 transition">
-                            <i class="fas fa-cloud-upload-alt mr-2"></i>Pilih Gambar
-                        </label>
-
-                        <div id="previewContainer" class="hidden mt-3 relative">
-                            <img id="previewImage"
-                                 class="w-full h-48 object-contain rounded-xl border-2 border-[#4988C4] shadow-lg bg-gray-50">
-                            <button type="button" onclick="hapusGambar()"
-                                class="absolute top-2 right-2 bg-red-500 hover:bg-red-600
-                                       text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg">
-                                ✕
+                    {{-- Aksi --}}
+                    <td class="p-3 text-center">
+                        <div class="flex justify-center gap-2">
+                            <button onclick="openEditEjurnal(
+                                        '{{ $item['id'] }}',
+                                        '{{ addslashes($item['title'] ?? '') }}',
+                                        '{{ addslashes($item['description'] ?? '') }}',
+                                        '{{ $item['status'] ?? 'draft' }}')"
+                                    class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                Edit
                             </button>
+                            <button type="button"
+                                    onclick="confirmHapusJurnal('{{ $item['id'] }}','{{ addslashes($item['title'] ?? 'jurnal ini') }}')"
+                                    class="text-red-600 hover:text-red-800 text-sm font-medium">
+                                Hapus
+                            </button>
+                            <form id="form-hapus-{{ $item['id'] }}"
+                                  action="{{ route('ejurnal.destroy', $item['id']) }}"
+                                  method="POST" class="hidden">
+                                @csrf @method('DELETE')
+                            </form>
                         </div>
-                    </div>
-
-                </div>
-
-                <div class="p-8 pt-4">
-                    <button type="submit"
-                        class="w-full bg-[#4988C4] text-white font-bold py-3 rounded-xl shadow-lg hover:bg-[#3a6ea0] transition">
-                        <i class="fas fa-upload mr-2"></i>Upload
-                    </button>
-                </div>
-            </form>
-        
+                    </td>
+                </tr>
+                @empty
+                <tr><td colspan="7" class="p-4 text-center text-gray-400">Belum ada e-jurnal.</td></tr>
+                @endforelse
+            </tbody>
+        </table>
         </div>
 
-        <!-- TABLE -->
-        <div class="lg:col-span-8 h-[650px] bg-white border-2 border-[#4988C4] rounded-xl shadow-xl p-8 flex flex-col">
-
-            <div class="flex items-center justify-between border-b-4 border-[#4988C4] pb-4 mb-6">
-                
-                <h2 class="text-3xl font-bold text-[#4988C4] flex items-center gap-2">
-                    <i class="fas fa-table"></i>
-                    Tabel Jurnal
-                </h2>
-
-                <!-- SEARCH BAR (TERHUBUNG KE CONTROLLER & API) -->
-                <form method="GET" action="{{ route('ejurnal.index') }}" class="relative w-64">
-                    <input
-                        type="text"
-                        name="search"
-                        value="{{ request('search') }}"
-                        placeholder="Cari jurnal..."
-                        class="w-full pl-10 pr-4 py-2 rounded-xl border-2 border-[#4988C4]
-                               focus:outline-none focus:ring-4 focus:ring-[#4988C4]/20">
-                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-[#4988C4]"></i>
-                </form>
-
+        <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+            <span id="infoEjurnal" class="text-sm text-gray-500"></span>
+            <div class="flex gap-2">
+                <button id="prevEjurnal" onclick="changePage('ejurnal', -1)"
+                        class="px-4 py-2 text-sm text-gray-500 border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition">
+                    Prev
+                </button>
+                <button id="nextEjurnal" onclick="changePage('ejurnal', 1)"
+                        class="px-4 py-2 text-sm font-semibold text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition">
+                    Next
+                </button>
             </div>
-
-            <div class="flex-1 overflow-x-auto overflow-y-auto border-2 border-[#4988C4] rounded-xl">
-                <table class="min-w-full text-sm">
-                    <thead class="sticky top-0 bg-[#4988C4] text-white">
-                        <tr>
-                            <th class="p-4 text-center">No</th>
-                            <th class="p-4 text-left">Judul</th>
-                            <th class="p-4 text-left">Deskripsi</th>
-                            <th class="p-4 text-left">User</th>
-                            <th class="p-4 text-center">Gambar</th>
-                            <th class="p-4 text-center">Status</th>
-                            <th class="p-4 text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($ejurnals as $index => $item)
-                        <tr class="border-b hover:bg-gray-50">
-                            <td class="p-4 text-center">{{ $index + 1 }}</td>
-                            <td class="p-4">{{ $item['title'] ?? '-' }}</td>
-                            <td class="p-4">{{ $item['description'] ?? '-' }}</td>
-                            <td class="p-4">{{ $item['user']['name'] ?? '-' }}</td>
-                            <td class="p-4 text-center">
-                                @if(!empty($item['thumbnail']))
-                                    <img src="{{ env('MEDIA_BASE_URL') . $item['thumbnail'] }}"
-                                         class="w-20 h-12 object-cover rounded mx-auto">
-                                @else
-                                    <span class="text-gray-400">-</span>
-                                @endif
-                            </td>
-                            <td class="p-4 text-center">
-                                @if(($item['status'] ?? '') === 'published')
-                                    <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
-                                        Published
-                                    </span>
-                                @else
-                                    <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">
-                                        Draft
-                                    </span>
-                                @endif
-                            </td>
-                            <td class="p-4 text-center">
-                                <form action="{{ route('ejurnal.destroy', $item['id']) }}" method="POST">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="text-red-600 hover:text-red-800 font-semibold">
-                                        Hapus
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="7" class="text-center p-6 text-gray-500">
-                                Data e-jurnal tidak ditemukan.
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-
         </div>
     </div>
+
+</div>
 </div>
 </div>
 
+{{-- MODAL EDIT --}}
+<div id="modalEditEjurnal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+<div class="bg-white rounded-xl p-6 w-full max-w-md">
+    <h3 class="text-xl font-bold text-[#4988C4] mb-4">
+        <i class="fas fa-edit mr-2"></i>Edit E-Jurnal
+    </h3>
+    <form id="formEditEjurnal" method="POST" enctype="multipart/form-data">
+        @csrf @method('PUT')
+        <input name="title" id="editEjurnalTitle"
+               class="w-full mb-3 px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4988C4]/30"
+               placeholder="Judul" required>
+        <textarea name="description" id="editEjurnalDesc" rows="3"
+                  class="w-full mb-3 px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4988C4]/30"
+                  placeholder="Deskripsi"></textarea>
+        <select name="status" id="editEjurnalStatus" class="w-full mb-3 px-4 py-2 border rounded-xl">
+            <option value="published">Published</option>
+            <option value="draft">Draft</option>
+        </select>
+        <div class="mb-4">
+            <input type="file" id="inputGambarEdit" name="thumbnail" accept="image/*"
+                   class="hidden" onchange="previewGambar(event,'previewEdit','namaFileEdit')">
+            <label for="inputGambarEdit"
+                   class="flex items-center justify-center gap-2 px-4 py-2 cursor-pointer
+                          border-2 border-dashed border-[#4988C4] rounded-xl
+                          text-[#4988C4] text-sm font-medium hover:bg-[#4988C4]/10 transition">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <span id="namaFileEdit">Ganti Foto (opsional)</span>
+            </label>
+            <img id="previewEdit" class="hidden mt-2 w-full h-32 object-cover rounded-xl border-2 border-[#4988C4]">
+        </div>
+        <div class="flex justify-end gap-2">
+            <button type="button" onclick="closeModalEjurnal()"
+                    class="px-4 py-2 border rounded-xl text-gray-600 hover:bg-gray-50">Batal</button>
+            <button type="submit"
+                    class="px-4 py-2 bg-[#4988C4] text-white rounded-xl hover:bg-[#3a6ea0]">Simpan</button>
+        </div>
+    </form>
+</div>
+</div>
+
+@include('component.popuphapus')
+
+<script>
+function openEditEjurnal(id, title, desc, status) {
+    document.getElementById('editEjurnalTitle').value  = title;
+    document.getElementById('editEjurnalDesc').value   = desc;
+    document.getElementById('editEjurnalStatus').value = status;
+    document.getElementById('formEditEjurnal').action  = `/ejurnal/${id}`;
+    document.getElementById('previewEdit').classList.add('hidden');
+    document.getElementById('namaFileEdit').textContent = 'Ganti Foto (opsional)';
+    document.getElementById('inputGambarEdit').value = '';
+    document.getElementById('modalEditEjurnal').classList.remove('hidden');
+    document.getElementById('modalEditEjurnal').classList.add('flex');
+}
+function closeModalEjurnal() {
+    document.getElementById('modalEditEjurnal').classList.add('hidden');
+    document.getElementById('modalEditEjurnal').classList.remove('flex');
+}
+document.getElementById('modalEditEjurnal').addEventListener('click', function(e) {
+    if (e.target === this) closeModalEjurnal();
+});
+
+function previewGambar(event, previewId, namaId) {
+    const file = event.target.files[0];
+    if (file) {
+        document.getElementById(namaId).textContent = file.name;
+        const reader = new FileReader();
+        reader.onload = e => {
+            const img = document.getElementById(previewId);
+            img.src = e.target.result;
+            img.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function confirmHapusJurnal(id, judul) {
+    openPopupHapus(
+        function () { document.getElementById('form-hapus-' + id).submit(); },
+        'Apakah Anda yakin ingin menghapus jurnal "' + judul + '"? Tindakan ini tidak dapat dibatalkan.'
+    );
+}
+
+const PER_PAGE = 10;
+const state = { ejurnal: { page: 1, rows: [] } };
+
+function searchTable(type) {
+    const keyword = document.getElementById('searchEjurnal').value.toLowerCase().trim();
+    const allRows = Array.from(document.getElementById('bodyEjurnal').rows);
+    const filtered = allRows.filter(row => {
+        const matches = keyword === '' || row.innerText.toLowerCase().includes(keyword);
+        row.style.display = matches ? '' : 'none';
+        return matches;
+    });
+    state[type].rows = filtered;
+    state[type].page = 1;
+    renderPagination(type);
+}
+
+function initPagination(type) {
+    state[type].rows = Array.from(document.getElementById('bodyEjurnal').rows);
+    renderPagination(type);
+}
+
+function renderPagination(type) {
+    const rows      = state[type].rows;
+    const total     = rows.length;
+    const totalPage = Math.max(1, Math.ceil(total / PER_PAGE));
+    const page      = state[type].page;
+    const start     = (page - 1) * PER_PAGE;
+    const end       = start + PER_PAGE;
+    rows.forEach((row, i) => { row.style.display = (i >= start && i < end) ? '' : 'none'; });
+    document.getElementById('infoEjurnal').textContent = total > 0 ? `Hal ${page} / ${totalPage}` : '';
+    document.getElementById('prevEjurnal').disabled = page <= 1;
+    document.getElementById('nextEjurnal').disabled = page >= totalPage;
+}
+
+function changePage(type, dir) {
+    const rows      = state[type].rows;
+    const totalPage = Math.max(1, Math.ceil(rows.length / PER_PAGE));
+    state[type].page = Math.min(Math.max(1, state[type].page + dir), totalPage);
+    renderPagination(type);
+}
+
+document.addEventListener('DOMContentLoaded', function () { initPagination('ejurnal'); });
+</script>
 @endsection

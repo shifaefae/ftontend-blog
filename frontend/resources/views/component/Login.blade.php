@@ -85,7 +85,7 @@
         </div>
 
         <p class="text-center text-sm text-gray-600">
-            Belum punya akun?
+            Daftar Kontributor ?
             <a href="{{ route('register') }}" class="text-[#4988C4] font-semibold hover:underline">
                 Daftar Sekarang
             </a>

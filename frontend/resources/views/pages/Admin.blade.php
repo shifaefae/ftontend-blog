@@ -16,7 +16,6 @@
 </div>
 @endif
 
-{{-- ✅ DEBUG PANEL — hapus setelah berhasil --}}
 @if(isset($debugError) && $debugError)
 <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-xl text-sm font-mono">
     <strong>⚠️ DEBUG ERROR:</strong><br>{{ $debugError }}
@@ -48,11 +47,12 @@
 </thead>
 <tbody>
 @forelse($users as $i => $user)
+@php $isSelf = session('user.id') == ($user['id'] ?? null); @endphp
 <tr class="border-b hover:bg-gray-50">
     <td class="px-4 py-3 text-gray-600">{{ (($currentPage - 1) * 10) + $i + 1 }}</td>
     <td class="px-4 py-3 font-medium text-gray-800">
         {{ $user['name'] ?? '-' }}
-        @if(session('user.id') == ($user['id'] ?? null))
+        @if($isSelf)
             <span class="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">Anda</span>
         @endif
     </td>
@@ -69,14 +69,27 @@
     </td>
     <td class="px-4 py-3 text-center">
         <div class="flex justify-center gap-3">
-            <button onclick="openEdit('{{ $user['id'] }}','{{ addslashes($user['name'] ?? '') }}','{{ addslashes($user['email'] ?? '') }}','{{ $user['role'] ?? 'user' }}')"
-                class="text-blue-600 hover:text-blue-800 font-medium text-sm">Edit</button>
-            @if(session('user.id') != ($user['id'] ?? null))
-                <form action="{{ route('admin.destroy', $user['id']) }}" method="POST"
-                      onsubmit="return confirm('Yakin hapus {{ addslashes($user['name'] ?? '') }}?')">
-                    @csrf @method('DELETE')
-                    <button type="submit" class="text-red-600 hover:text-red-800 font-medium text-sm">Hapus</button>
-                </form>
+            @if($role === 'super_admin')
+                <span class="text-xs text-gray-400 italic">Tidak dapat diubah</span>
+            @else
+                <button onclick="openEdit('{{ $user['id'] }}','{{ addslashes($user['name'] ?? '') }}','{{ addslashes($user['email'] ?? '') }}','{{ $role }}')"
+                    class="text-blue-600 hover:text-blue-800 font-medium text-sm">Edit</button>
+
+                @if(!$isSelf)
+                    {{-- Tombol hapus → popup konfirmasi --}}
+                    <button type="button"
+                            onclick="confirmHapusUser('{{ $user['id'] }}','{{ addslashes($user['name'] ?? 'user ini') }}')"
+                            class="text-red-600 hover:text-red-800 font-medium text-sm">
+                        Hapus
+                    </button>
+
+                    {{-- Hidden form untuk submit DELETE --}}
+                    <form id="form-hapus-{{ $user['id'] }}"
+                          action="{{ route('admin.destroy', $user['id']) }}"
+                          method="POST" class="hidden">
+                        @csrf @method('DELETE')
+                    </form>
+                @endif
             @endif
         </div>
     </td>
@@ -136,9 +149,8 @@
             <label class="block text-sm font-semibold text-gray-700 mb-1">Role</label>
             <select name="role" class="w-full border px-4 py-3 rounded-xl outline-none" required>
                 <option value="">-- Pilih Role --</option>
-                <option value="super_admin">Super Admin</option>
-                <option value="admin">Admin</option>
-                <option value="user">User</option>
+                <option value="admin"  {{ old('role') === 'admin'  ? 'selected' : '' }}>Admin</option>
+                <option value="user"   {{ old('role') === 'user'   ? 'selected' : '' }}>User</option>
             </select>
         </div>
         <div class="mb-4">
@@ -188,7 +200,6 @@
         <div class="mb-4">
             <label class="block text-sm font-semibold text-gray-700 mb-1">Role</label>
             <select name="role" id="editRole" class="w-full border px-4 py-3 rounded-xl outline-none" required>
-                <option value="super_admin">Super Admin</option>
                 <option value="admin">Admin</option>
                 <option value="user">User</option>
             </select>
@@ -219,6 +230,9 @@
 </div>
 </div>
 
+{{-- Popup hapus global --}}
+@include('component.popuphapus')
+
 <script>
 function openTambah() {
     document.getElementById('modalTambah').classList.remove('hidden');
@@ -246,6 +260,16 @@ document.getElementById('modalTambah').addEventListener('click', function(e) {
 document.getElementById('modalEdit').addEventListener('click', function(e) {
     if (e.target === this) closeEdit();
 });
+
+// ===== Hapus dengan popup konfirmasi =====
+function confirmHapusUser(id, nama) {
+    openPopupHapus(
+        function () {
+            document.getElementById('form-hapus-' + id).submit();
+        },
+        'Apakah Anda yakin ingin menghapus user "' + nama + '"? Tindakan ini tidak dapat dibatalkan.'
+    );
+}
 </script>
 
 @endsection
