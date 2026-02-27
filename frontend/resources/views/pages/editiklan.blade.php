@@ -71,48 +71,74 @@
                 </select>
             </div>
 
-            {{-- Thumbnail --}}
+            {{-- Thumbnail — pola sama seperti Editblog --}}
             <div class="mb-4">
                 <label class="block text-sm font-semibold text-gray-700 mb-1">Gambar (kosongkan jika tidak diubah)</label>
 
-                {{-- Gambar saat ini --}}
                 @php
-                    $mediaBase = rtrim(env('MEDIA', ''), '/');
-                    $currentThumb = null;
-
-                    if (!empty($iklan['thumbnail'])) {
-                        $thumb = $iklan['thumbnail'];
-                        if (str_starts_with($thumb, 'http')) {
-                            $currentThumb = $thumb;
-                        } else {
-                            $currentThumb = $mediaBase . '/storage/' . ltrim($thumb, '/') . '?ngrok-skip-browser-warning=true';
-                        }
+                    $thumbRaw = $iklan['thumbnail'] ?? '';
+                    if (!empty($thumbRaw)) {
+                        $thumbFull = str_starts_with($thumbRaw, 'http')
+                            ? $thumbRaw
+                            : rtrim(env('MEDIA', ''), '/') . '/storage/' . ltrim($thumbRaw, '/');
+                        $thumbUrl = route('proxy.image', ['url' => $thumbFull]);
+                    } else {
+                        $thumbUrl = '';
                     }
                 @endphp
 
-                @if($currentThumb)
-                    <div class="mb-3">
-                        <p class="text-xs text-gray-500 mb-1">Gambar saat ini:</p>
-                        <img src="{{ $currentThumb }}"
-                             class="w-32 h-24 rounded-xl object-cover border shadow"
-                             onerror="this.src='{{ asset('images/default-iklan-thumbnail.jpg') }}'">
-                    </div>
+                {{-- Satu kotak gambar: tampil lama atau preview baru --}}
+                @if(!empty($thumbUrl))
+                <div id="thumbWrapper"
+                     class="relative rounded-xl overflow-hidden border-2 border-gray-200 shadow mb-3">
+                    <img id="singleThumb"
+                         src="{{ $thumbUrl }}"
+                         class="w-full h-48 object-cover block"
+                         alt="Thumbnail iklan">
+                    <span id="badgeGambar"
+                          class="absolute top-2 left-2 text-xs font-bold px-2 py-0.5 rounded-full
+                                 bg-gray-700/70 text-white">
+                        Gambar saat ini
+                    </span>
+                    <button type="button" id="btnBatalGambar" onclick="batalGambar()"
+                            class="hidden absolute top-2 right-2 bg-white/90 hover:bg-white
+                                   text-gray-700 text-xs font-semibold px-3 py-1 rounded-full shadow
+                                   border border-gray-300 transition">
+                        ✕ Batalkan
+                    </button>
+                </div>
+                @else
+                <div id="thumbWrapper"
+                     class="relative rounded-xl overflow-hidden border-2 border-gray-200 shadow mb-3"
+                     style="display:none">
+                    <img id="singleThumb"
+                         src=""
+                         class="w-full h-48 object-cover block"
+                         alt="Thumbnail iklan">
+                    <span id="badgeGambar"
+                          class="absolute top-2 left-2 text-xs font-bold px-2 py-0.5 rounded-full
+                                 bg-[#4988C4] text-white">
+                        ✓ Gambar baru
+                    </span>
+                    <button type="button" id="btnBatalGambar" onclick="batalGambar()"
+                            class="hidden absolute top-2 right-2 bg-white/90 hover:bg-white
+                                   text-gray-700 text-xs font-semibold px-3 py-1 rounded-full shadow
+                                   border border-gray-300 transition">
+                        ✕ Batalkan
+                    </button>
+                </div>
                 @endif
 
-                <label for="edit_thumbnail_input"
-                       class="flex items-center gap-3 w-full border-2 border-dashed border-[#4988C4] rounded-xl p-3 cursor-pointer hover:bg-blue-50 transition">
+                <label for="inputGambar"
+                       class="flex items-center gap-3 w-full border-2 border-dashed border-[#4988C4]
+                              rounded-xl p-3 cursor-pointer hover:bg-blue-50 transition">
                     <i class="fas fa-cloud-upload-alt text-[#4988C4] text-xl"></i>
-                    <span id="edit_thumbnail_label" class="text-gray-500 text-sm truncate">Pilih gambar baru...</span>
+                    <span id="namaFile" class="text-gray-500 text-sm truncate">
+                        {{ !empty($thumbUrl) ? 'Ganti gambar' : 'Pilih gambar...' }}
+                    </span>
                 </label>
-
-                <input type="file" name="thumbnail" id="edit_thumbnail_input" accept="image/*"
-                       class="hidden"
-                       onchange="previewThumbnail(this, 'edit_thumbnail_label', 'edit_preview_wrap', 'edit_preview')">
-
-                <div id="edit_preview_wrap" class="hidden mt-3 border-2 border-[#4988C4] rounded-xl overflow-hidden">
-                    <img id="edit_preview" src="#" alt="Preview"
-                         class="w-full max-h-48 object-cover">
-                </div>
+                <input type="file" name="thumbnail" id="inputGambar" accept="image/*"
+                       class="hidden" onchange="previewGambar(event)">
             </div>
 
             {{-- Tombol --}}
@@ -131,21 +157,52 @@
 </div>
 
 <script>
-function previewThumbnail(input, labelId, wrapId, imgId) {
-    const label = document.getElementById(labelId);
-    const wrap  = document.getElementById(wrapId);
-    const img   = document.getElementById(imgId);
+var _thumbSrcLama = (function() {
+    var el = document.getElementById('singleThumb');
+    return el ? el.src : '';
+})();
 
-    if (input.files && input.files[0]) {
-        const file = input.files[0];
-        label.textContent = file.name;
+function previewGambar(event) {
+    var file = event.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        var wrapper  = document.getElementById('thumbWrapper');
+        var img      = document.getElementById('singleThumb');
+        var badge    = document.getElementById('badgeGambar');
+        var btnBatal = document.getElementById('btnBatalGambar');
+        var namaFile = document.getElementById('namaFile');
 
-        const reader = new FileReader();
-        reader.onload = e => {
-            img.src = e.target.result;
-            wrap.classList.remove('hidden');
-        };
-        reader.readAsDataURL(file);
+        wrapper.style.display      = '';
+        img.src                    = e.target.result;
+        badge.textContent          = '✓ Gambar baru';
+        badge.style.backgroundColor = '#4988C4';
+        btnBatal.classList.remove('hidden');
+        namaFile.textContent       = file.name;
+    };
+    reader.readAsDataURL(file);
+}
+
+function batalGambar() {
+    var wrapper  = document.getElementById('thumbWrapper');
+    var img      = document.getElementById('singleThumb');
+    var badge    = document.getElementById('badgeGambar');
+    var btnBatal = document.getElementById('btnBatalGambar');
+    var namaFile = document.getElementById('namaFile');
+    var input    = document.getElementById('inputGambar');
+
+    input.value = '';
+
+    if (_thumbSrcLama && _thumbSrcLama !== window.location.href) {
+        img.src                    = _thumbSrcLama;
+        badge.textContent          = 'Gambar saat ini';
+        badge.style.backgroundColor = '';
+        namaFile.textContent       = 'Ganti gambar';
+        btnBatal.classList.add('hidden');
+    } else {
+        wrapper.style.display = 'none';
+        namaFile.textContent  = 'Pilih gambar...';
+        btnBatal.classList.add('hidden');
     }
 }
 </script>

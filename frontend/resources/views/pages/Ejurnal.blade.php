@@ -45,7 +45,7 @@
 
             <div class="mb-4">
                 <input type="file" id="inputGambarTambah" name="thumbnail" accept="image/*"
-                       class="hidden" onchange="previewGambar(event,'previewTambah','namaFileTambah')">
+                       class="hidden" onchange="previewGambarTambah(event)">
                 <label for="inputGambarTambah"
                        class="flex items-center justify-center gap-2 px-4 py-3 cursor-pointer
                               border-2 border-dashed border-[#4988C4] rounded-xl
@@ -53,7 +53,9 @@
                     <i class="fas fa-cloud-upload-alt"></i>
                     <span id="namaFileTambah">Pilih Gambar (opsional)</span>
                 </label>
-                <img id="previewTambah" class="hidden mt-3 w-full h-36 object-cover rounded-xl border-2 border-[#4988C4]">
+                <div id="previewWrapTambah" class="hidden mt-3">
+                    <img id="previewTambah" class="w-full h-36 object-cover rounded-xl border-2 border-[#4988C4]">
+                </div>
             </div>
 
             <button type="submit"
@@ -94,26 +96,26 @@
             </thead>
             <tbody id="bodyEjurnal">
                 @forelse($ejurnals as $index => $item)
+                @php
+                    $rawThumb = $item['thumbnail'] ?? '';
+                    $thumbList = '';
+                    if (!empty($rawThumb)) {
+                        $fullThumb = str_starts_with($rawThumb, 'http')
+                            ? $rawThumb
+                            : rtrim(env('MEDIA', ''), '/') . '/storage/' . ltrim($rawThumb, '/');
+                        $thumbList = '/proxy-image?url=' . urlencode($fullThumb);
+                    }
+                @endphp
                 <tr class="border-b hover:bg-gray-50">
 
                     <td class="p-3 text-center text-gray-500">{{ $index + 1 }}</td>
 
-                    {{-- Foto — proxy image --}}
+                    {{-- Foto --}}
                     <td class="p-3">
-                        @php
-                            $thumbUrl = null;
-                            if (!empty($item['thumbnail'])) {
-                                $raw = str_starts_with($item['thumbnail'], 'http')
-                                    ? $item['thumbnail']
-                                    : env('MEDIA') . '/storage/' . ltrim($item['thumbnail'], '/');
-                                $thumbUrl = '/proxy-image?url=' . urlencode($raw);
-                            }
-                        @endphp
-                        @if($thumbUrl)
-                            <img src="{{ $thumbUrl }}"
-                                 class="w-12 h-12 rounded-lg object-cover"
-                                 loading="lazy"
-                                 onerror="this.outerHTML='<div class=\'w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center text-red-400 text-xs\'>Err</div>'">
+                        @if($thumbList)
+                            <img src="{{ $thumbList }}"
+                                 class="w-12 h-12 rounded-lg object-cover" loading="lazy"
+                                 onerror="this.outerHTML='<div class=\'w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center\'><i class=\'fas fa-image text-gray-400 text-xs\'></i></div>'">
                         @else
                             <div class="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center">
                                 <i class="fas fa-image text-gray-400 text-xs"></i>
@@ -121,22 +123,14 @@
                         @endif
                     </td>
 
-                    {{-- Judul (dipisah) --}}
-                    <td class="p-3 font-semibold text-gray-800">
-                        {{ $item['title'] ?? '-' }}
-                    </td>
+                    <td class="p-3 font-semibold text-gray-800">{{ $item['title'] ?? '-' }}</td>
 
-                    {{-- Deskripsi (dipisah) --}}
                     <td class="p-3 text-gray-500 text-xs max-w-[160px]">
                         <span class="line-clamp-2">{{ $item['description'] ?? '-' }}</span>
                     </td>
 
-                    {{-- User --}}
-                    <td class="p-3 text-gray-600 text-xs">
-                        {{ $item['user']['name'] ?? '-' }}
-                    </td>
+                    <td class="p-3 text-gray-600 text-xs">{{ $item['user']['name'] ?? '-' }}</td>
 
-                    {{-- Status --}}
                     <td class="p-3 text-center">
                         @if(($item['status'] ?? '') === 'published')
                             <span class="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-semibold">Published</span>
@@ -145,14 +139,15 @@
                         @endif
                     </td>
 
-                    {{-- Aksi --}}
+                    {{-- Kirim thumbRaw ke modal agar bisa tampilkan gambar lama --}}
                     <td class="p-3 text-center">
                         <div class="flex justify-center gap-2">
                             <button onclick="openEditEjurnal(
                                         '{{ $item['id'] }}',
                                         '{{ addslashes($item['title'] ?? '') }}',
                                         '{{ addslashes($item['description'] ?? '') }}',
-                                        '{{ $item['status'] ?? 'draft' }}')"
+                                        '{{ $item['status'] ?? 'draft' }}',
+                                        '{{ addslashes($rawThumb) }}')"
                                     class="text-blue-600 hover:text-blue-800 text-sm font-medium">
                                 Edit
                             </button>
@@ -197,7 +192,7 @@
 
 {{-- MODAL EDIT --}}
 <div id="modalEditEjurnal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
-<div class="bg-white rounded-xl p-6 w-full max-w-md">
+<div class="bg-white rounded-xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
     <h3 class="text-xl font-bold text-[#4988C4] mb-4">
         <i class="fas fa-edit mr-2"></i>Edit E-Jurnal
     </h3>
@@ -213,18 +208,40 @@
             <option value="published">Published</option>
             <option value="draft">Draft</option>
         </select>
+
+        {{-- Area gambar — satu img, ganti src saat pilih baru --}}
         <div class="mb-4">
-            <input type="file" id="inputGambarEdit" name="thumbnail" accept="image/*"
-                   class="hidden" onchange="previewGambar(event,'previewEdit','namaFileEdit')">
+            <div id="thumbWrapperEdit"
+                 class="relative rounded-xl overflow-hidden border-2 border-gray-200 shadow mb-3"
+                 style="display:none">
+                <img id="singleThumbEdit"
+                     src=""
+                     class="w-full h-40 object-cover block"
+                     alt="Thumbnail">
+                <span id="badgeGambarEdit"
+                      class="absolute top-2 left-2 text-xs font-bold px-2 py-0.5 rounded-full
+                             bg-gray-700/70 text-white">
+                    Gambar saat ini
+                </span>
+                <button type="button" id="btnBatalGambarEdit" onclick="batalGambarEdit()"
+                        class="hidden absolute top-2 right-2 bg-white/90 hover:bg-white
+                               text-gray-700 text-xs font-semibold px-3 py-1 rounded-full shadow
+                               border border-gray-300 transition">
+                    ✕ Batalkan
+                </button>
+            </div>
+
             <label for="inputGambarEdit"
                    class="flex items-center justify-center gap-2 px-4 py-2 cursor-pointer
                           border-2 border-dashed border-[#4988C4] rounded-xl
                           text-[#4988C4] text-sm font-medium hover:bg-[#4988C4]/10 transition">
                 <i class="fas fa-cloud-upload-alt"></i>
-                <span id="namaFileEdit">Ganti Foto (opsional)</span>
+                <span id="namaFileEdit">Pilih Gambar (opsional)</span>
             </label>
-            <img id="previewEdit" class="hidden mt-2 w-full h-32 object-cover rounded-xl border-2 border-[#4988C4]">
+            <input type="file" id="inputGambarEdit" name="thumbnail" accept="image/*"
+                   class="hidden" onchange="previewGambarEdit(event)">
         </div>
+
         <div class="flex justify-end gap-2">
             <button type="button" onclick="closeModalEjurnal()"
                     class="px-4 py-2 border rounded-xl text-gray-600 hover:bg-gray-50">Batal</button>
@@ -238,37 +255,118 @@
 @include('component.popuphapus')
 
 <script>
-function openEditEjurnal(id, title, desc, status) {
+// ============================================================
+//  Modal Edit
+// ============================================================
+var _thumbSrcLamaEdit = '';
+
+function openEditEjurnal(id, title, desc, status, thumbRaw) {
     document.getElementById('editEjurnalTitle').value  = title;
     document.getElementById('editEjurnalDesc').value   = desc;
     document.getElementById('editEjurnalStatus').value = status;
-    document.getElementById('formEditEjurnal').action  = `/ejurnal/${id}`;
-    document.getElementById('previewEdit').classList.add('hidden');
-    document.getElementById('namaFileEdit').textContent = 'Ganti Foto (opsional)';
-    document.getElementById('inputGambarEdit').value = '';
+    document.getElementById('formEditEjurnal').action  = '/ejurnal/' + id;
+    document.getElementById('inputGambarEdit').value   = '';
+
+    var wrapper  = document.getElementById('thumbWrapperEdit');
+    var img      = document.getElementById('singleThumbEdit');
+    var badge    = document.getElementById('badgeGambarEdit');
+    var btnBatal = document.getElementById('btnBatalGambarEdit');
+    var namaFile = document.getElementById('namaFileEdit');
+
+    _thumbSrcLamaEdit = '';
+
+    if (thumbRaw && thumbRaw !== '') {
+        var mediaBase = '{{ rtrim(env("MEDIA", ""), "/") }}';
+        var fullUrl   = (thumbRaw.indexOf('http') === 0)
+                        ? thumbRaw
+                        : mediaBase + '/storage/' + thumbRaw.replace(/^\//, '');
+        var proxyUrl  = '/proxy-image?url=' + encodeURIComponent(fullUrl);
+
+        _thumbSrcLamaEdit      = proxyUrl;
+        img.src                = proxyUrl;
+        wrapper.style.display  = '';
+        badge.textContent      = 'Gambar saat ini';
+        badge.style.backgroundColor = '';
+        btnBatal.classList.add('hidden');
+        namaFile.textContent   = 'Ganti foto';
+    } else {
+        wrapper.style.display  = 'none';
+        img.src                = '';
+        namaFile.textContent   = 'Pilih Gambar (opsional)';
+    }
+
     document.getElementById('modalEditEjurnal').classList.remove('hidden');
     document.getElementById('modalEditEjurnal').classList.add('flex');
 }
+
 function closeModalEjurnal() {
     document.getElementById('modalEditEjurnal').classList.add('hidden');
     document.getElementById('modalEditEjurnal').classList.remove('flex');
 }
+
 document.getElementById('modalEditEjurnal').addEventListener('click', function(e) {
     if (e.target === this) closeModalEjurnal();
 });
 
-function previewGambar(event, previewId, namaId) {
-    const file = event.target.files[0];
-    if (file) {
-        document.getElementById(namaId).textContent = file.name;
-        const reader = new FileReader();
-        reader.onload = e => {
-            const img = document.getElementById(previewId);
-            img.src = e.target.result;
-            img.classList.remove('hidden');
-        };
-        reader.readAsDataURL(file);
+function previewGambarEdit(event) {
+    var file = event.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        var wrapper  = document.getElementById('thumbWrapperEdit');
+        var img      = document.getElementById('singleThumbEdit');
+        var badge    = document.getElementById('badgeGambarEdit');
+        var btnBatal = document.getElementById('btnBatalGambarEdit');
+        var namaFile = document.getElementById('namaFileEdit');
+
+        wrapper.style.display       = '';
+        img.src                     = e.target.result;
+        badge.textContent           = '✓ Gambar baru';
+        badge.style.backgroundColor = '#4988C4';
+        btnBatal.classList.remove('hidden');
+        namaFile.textContent        = file.name;
+    };
+    reader.readAsDataURL(file);
+}
+
+function batalGambarEdit() {
+    var wrapper  = document.getElementById('thumbWrapperEdit');
+    var img      = document.getElementById('singleThumbEdit');
+    var badge    = document.getElementById('badgeGambarEdit');
+    var btnBatal = document.getElementById('btnBatalGambarEdit');
+    var namaFile = document.getElementById('namaFileEdit');
+    var input    = document.getElementById('inputGambarEdit');
+
+    input.value = '';
+
+    if (_thumbSrcLamaEdit) {
+        img.src                     = _thumbSrcLamaEdit;
+        wrapper.style.display       = '';
+        badge.textContent           = 'Gambar saat ini';
+        badge.style.backgroundColor = '';
+        namaFile.textContent        = 'Ganti foto';
+        btnBatal.classList.add('hidden');
+    } else {
+        wrapper.style.display = 'none';
+        img.src               = '';
+        namaFile.textContent  = 'Pilih Gambar (opsional)';
+        btnBatal.classList.add('hidden');
     }
+}
+
+// ============================================================
+//  Preview form Tambah
+// ============================================================
+function previewGambarTambah(event) {
+    var file = event.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        document.getElementById('namaFileTambah').textContent = file.name;
+        document.getElementById('previewTambah').src = e.target.result;
+        document.getElementById('previewWrapTambah').classList.remove('hidden');
+    };
+    reader.readAsDataURL(file);
 }
 
 function confirmHapusJurnal(id, judul) {
@@ -278,6 +376,9 @@ function confirmHapusJurnal(id, judul) {
     );
 }
 
+// ============================================================
+//  Pagination
+// ============================================================
 const PER_PAGE = 10;
 const state = { ejurnal: { page: 1, rows: [] } };
 

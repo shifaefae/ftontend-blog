@@ -2,7 +2,6 @@
 
     <nav class="flex-1 py-4 overflow-y-auto px-2">
         <ul class="space-y-2">
-
             {{-- DASHBOARD — semua role --}}
             <li>
                 <a href="/"
